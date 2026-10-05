@@ -181,13 +181,13 @@
   // ---------- Hero ----------
   const COLORWAYS = {
     purple: {
-      img: "assets/img/pwrd-purple.png",
+      img: "assets/img/pwrd-purple.webp",
       depth: "assets/img/pwrd-purple-depth.png",
       label: "Purple",
       walmart: "https://www.walmart.com/ip/PWRD-Pink-Liquid-Glitter-Wireless-Bluetooth-Headphones-Over-Ear-with-Microphone/19416250961",
     },
     pink: {
-      img: "assets/img/pwrd-pink.png",
+      img: "assets/img/pwrd-pink.webp",
       depth: "assets/img/pwrd-pink-depth.png",
       label: "Pink",
       walmart: "https://www.walmart.com/ip/PWRD-Pink-Liquid-Glitter-Wireless-Bluetooth-Headphones-Over-Ear-with-Microphone/19459660128",
@@ -254,11 +254,12 @@
       if (!heroCanvas) throw new Error("No hero canvas");
       hero = new DepthViewer(heroCanvas, { strength: 0.045 });
       await hero.load(COLORWAYS[initialColor].img, COLORWAYS[initialColor].depth);
+      tilt.style.aspectRatio = hero.aspect;
       viewers.push({ v: hero, el: tilt, tiltEl: tilt, deg: 14 });
 
       if (duoCanvas) {
         const duo = new DepthViewer(duoCanvas, { strength: 0.05 });
-        await duo.load("assets/img/pwrd-duo.png", "assets/img/pwrd-duo-depth.png");
+        await duo.load("assets/img/pwrd-duo.webp", "assets/img/pwrd-duo-depth.png");
         viewers.push({ v: duo, el: duoCanvas, tiltEl: duoCanvas, deg: 8 });
       }
     } catch (err) {
@@ -314,6 +315,8 @@
       heroCanvas.style.opacity = 0;
       await new Promise((r) => setTimeout(r, 300));
       await hero.load(COLORWAYS[key].img, COLORWAYS[key].depth);
+      if (tilt) tilt.style.aspectRatio = hero.aspect;
+      hero.resize();
       heroCanvas.style.opacity = 1;
     }
     if (fromSwatch) {
