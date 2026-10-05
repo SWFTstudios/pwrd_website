@@ -180,35 +180,95 @@
 
   // ---------- Hero ----------
   const COLORWAYS = {
-    purple: { img: "assets/img/pwrd-purple.webp", depth: "assets/img/pwrd-purple-depth.png", label: "Purple" },
-    pink: { img: "assets/img/pwrd-pink.webp", depth: "assets/img/pwrd-pink-depth.png", label: "Pink" },
+    purple: {
+      img: "assets/img/pwrd-purple.webp",
+      depth: "assets/img/pwrd-purple-depth.png",
+      label: "Purple",
+      walmart: "https://www.walmart.com/ip/PWRD-Pink-Liquid-Glitter-Wireless-Bluetooth-Headphones-Over-Ear-with-Microphone/19416250961",
+    },
+    pink: {
+      img: "assets/img/pwrd-pink.webp",
+      depth: "assets/img/pwrd-pink-depth.png",
+      label: "Pink",
+      walmart: "https://www.walmart.com/ip/PWRD-Pink-Liquid-Glitter-Wireless-Bluetooth-Headphones-Over-Ear-with-Microphone/19459660128",
+    },
   };
+
+  const isProductPage = document.body.dataset.page === "product";
+  const params = new URLSearchParams(location.search);
+  const paramColor = (params.get("color") || "").toLowerCase();
+  const initialColor =
+    COLORWAYS[paramColor] ? paramColor
+    : COLORWAYS[document.body.dataset.colorway] ? document.body.dataset.colorway
+    : "purple";
+  document.body.dataset.colorway = initialColor;
 
   const tilt = document.getElementById("tilt");
   const heroCanvas = document.getElementById("hero-canvas");
   const heroFallback = document.getElementById("hero-fallback");
   const duoCanvas = document.getElementById("duo-canvas");
+  const duoFallback = document.getElementById("duo-fallback");
   const label = document.getElementById("swatch-label");
+  const productColorLine = document.getElementById("product-color-line");
+  const ctaPrimary = document.getElementById("cta-primary");
+  const ctaPrimaryLabel = document.getElementById("cta-primary-label");
+  const ctaSecondary = document.getElementById("cta-secondary");
   const viewers = [];
   let hero = null;
 
+  function syncProductUI(key) {
+    const other = key === "pink" ? "purple" : "pink";
+    if (label) label.textContent = COLORWAYS[key].label;
+    if (productColorLine) productColorLine.textContent = `in ${COLORWAYS[key].label.toLowerCase()}.`;
+    if (ctaPrimary && ctaPrimaryLabel) {
+      ctaPrimary.href = COLORWAYS[key].walmart;
+      ctaPrimaryLabel.textContent = `Shop ${COLORWAYS[key].label} Walmart`;
+    }
+    if (ctaSecondary) {
+      ctaSecondary.href = COLORWAYS[other].walmart;
+      ctaSecondary.textContent = `Shop ${COLORWAYS[other].label} Walmart`;
+    }
+    document.querySelectorAll("[data-select-colorway]").forEach((card) => {
+      card.classList.toggle("is-selected", card.dataset.selectColorway === key);
+    });
+    if (isProductPage) {
+      const url = new URL(location.href);
+      url.searchParams.set("color", key);
+      history.replaceState(null, "", url);
+    }
+  }
+
   async function setup() {
+    syncProductUI(initialColor);
+    if (heroFallback) {
+      heroFallback.src = COLORWAYS[initialColor].img;
+      heroFallback.alt = `PWRD glitter headphones in ${COLORWAYS[initialColor].label.toLowerCase()}`;
+    }
+    document.querySelectorAll(".swatch").forEach((b) => {
+      const on = b.dataset.colorway === initialColor;
+      b.classList.toggle("is-active", on);
+      b.setAttribute("aria-checked", on);
+    });
+
     try {
+      if (!heroCanvas) throw new Error("No hero canvas");
       hero = new DepthViewer(heroCanvas, { strength: 0.045 });
-      await hero.load(COLORWAYS.purple.img, COLORWAYS.purple.depth);
+      await hero.load(COLORWAYS[initialColor].img, COLORWAYS[initialColor].depth);
       tilt.style.aspectRatio = hero.aspect;
       viewers.push({ v: hero, el: tilt, tiltEl: tilt, deg: 14 });
 
-      const duo = new DepthViewer(duoCanvas, { strength: 0.05 });
-      await duo.load("assets/img/pwrd-duo.webp", "assets/img/pwrd-duo-depth.png");
-      viewers.push({ v: duo, el: duoCanvas, tiltEl: duoCanvas, deg: 8 });
+      if (duoCanvas) {
+        const duo = new DepthViewer(duoCanvas, { strength: 0.05 });
+        await duo.load("assets/img/pwrd-duo.webp", "assets/img/pwrd-duo-depth.png");
+        viewers.push({ v: duo, el: duoCanvas, tiltEl: duoCanvas, deg: 8 });
+      }
     } catch (err) {
       console.warn("Falling back to static images:", err);
       document.documentElement.classList.add("no-webgl");
       // Keep CSS tilt on the static images so it still feels dimensional.
       viewers.length = 0;
-      viewers.push({ v: null, el: tilt, tiltEl: tilt, deg: 14 });
-      viewers.push({ v: null, el: document.getElementById("duo-fallback"), tiltEl: document.getElementById("duo-fallback"), deg: 8 });
+      if (tilt) viewers.push({ v: null, el: tilt, tiltEl: tilt, deg: 14 });
+      if (duoFallback) viewers.push({ v: null, el: duoFallback, tiltEl: duoFallback, deg: 8 });
     }
     requestAnimationFrame(loop);
   }
@@ -234,56 +294,76 @@
 
   // Colorway switching with a quick fade.
   let switching = false;
-  document.querySelectorAll(".swatch").forEach((btn) => {
-    btn.addEventListener("click", async () => {
-      const key = btn.dataset.colorway;
-      if (switching || document.body.dataset.colorway === key) return;
-      switching = true;
-      document.querySelectorAll(".swatch").forEach((b) => {
-        const on = b === btn;
-        b.classList.toggle("is-active", on);
-        b.setAttribute("aria-checked", on);
-      });
-      document.body.dataset.colorway = key;
-      label.textContent = COLORWAYS[key].label;
+  async function setColorway(key, { fromSwatch } = {}) {
+    if (switching || !COLORWAYS[key] || document.body.dataset.colorway === key) {
+      if (document.body.dataset.colorway === key) syncProductUI(key);
+      return;
+    }
+    switching = true;
+    document.querySelectorAll(".swatch").forEach((b) => {
+      const on = b.dataset.colorway === key;
+      b.classList.toggle("is-active", on);
+      b.setAttribute("aria-checked", on);
+    });
+    document.body.dataset.colorway = key;
+    syncProductUI(key);
+    if (heroFallback) {
       heroFallback.src = COLORWAYS[key].img;
       heroFallback.alt = `PWRD glitter headphones in ${COLORWAYS[key].label.toLowerCase()}`;
-      if (hero) {
-        heroCanvas.style.opacity = 0;
-        await new Promise((r) => setTimeout(r, 300));
-        await hero.load(COLORWAYS[key].img, COLORWAYS[key].depth);
-        tilt.style.aspectRatio = hero.aspect;
-        hero.resize();
-        heroCanvas.style.opacity = 1;
-      }
-      switching = false;
+    }
+    if (hero && heroCanvas) {
+      heroCanvas.style.opacity = 0;
+      await new Promise((r) => setTimeout(r, 300));
+      await hero.load(COLORWAYS[key].img, COLORWAYS[key].depth);
+      if (tilt) tilt.style.aspectRatio = hero.aspect;
+      hero.resize();
+      heroCanvas.style.opacity = 1;
+    }
+    if (fromSwatch) {
+      /* no-op: keeps API explicit for callers */
+    }
+    switching = false;
+  }
+
+  document.querySelectorAll(".swatch").forEach((btn) => {
+    btn.addEventListener("click", () => setColorway(btn.dataset.colorway, { fromSwatch: true }));
+  });
+
+  document.querySelectorAll("[data-select-colorway]").forEach((card) => {
+    card.addEventListener("click", (e) => {
+      if (e.target.closest("a")) return;
+      setColorway(card.dataset.selectColorway);
     });
   });
 
   // Drag on the stage to "turn" the headphones on touch screens.
   const stage = document.getElementById("stage");
-  stage.addEventListener("pointerdown", (e) => {
-    const start = { x: e.clientX, y: e.clientY };
-    const move = (ev) => setInput((ev.clientX - start.x) / 160, (ev.clientY - start.y) / 160);
-    const up = () => {
-      window.removeEventListener("pointermove", move);
-      window.removeEventListener("pointerup", up);
-    };
-    window.addEventListener("pointermove", move);
-    window.addEventListener("pointerup", up);
-  });
+  if (stage) {
+    stage.addEventListener("pointerdown", (e) => {
+      const start = { x: e.clientX, y: e.clientY };
+      const move = (ev) => setInput((ev.clientX - start.x) / 160, (ev.clientY - start.y) / 160);
+      const up = () => {
+        window.removeEventListener("pointermove", move);
+        window.removeEventListener("pointerup", up);
+      };
+      window.addEventListener("pointermove", move);
+      window.addEventListener("pointerup", up);
+    });
+  }
 
   // Hover tilt on colorway cards.
   document.querySelectorAll("[data-depth-card]").forEach((card) => {
-    const img = card.querySelector("img");
+    const img = card.querySelector(".cw-media img") || card.querySelector("img");
     card.addEventListener("pointermove", (e) => {
-      if (reduceMotion) return;
+      if (reduceMotion || !img) return;
       const r = card.getBoundingClientRect();
       const x = (e.clientX - r.left) / r.width - 0.5;
       const y = (e.clientY - r.top) / r.height - 0.5;
       img.style.transform = `rotateY(${x * 18}deg) rotateX(${-y * 12}deg) scale(1.04)`;
     });
-    card.addEventListener("pointerleave", () => (img.style.transform = ""));
+    card.addEventListener("pointerleave", () => {
+      if (img) img.style.transform = "";
+    });
   });
 
   setup();
