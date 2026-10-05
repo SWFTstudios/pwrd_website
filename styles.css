@@ -101,7 +101,7 @@ h1 span { display: block; }
 }
 .stage:active { cursor: grabbing; }
 .tilt {
-  position: relative; height: 100%; aspect-ratio: 485 / 656; max-width: 100%;
+  position: relative; width: min(100%, calc(min(78vh, 760px) * 0.735)); height: auto; aspect-ratio: 832 / 1132;
   transform-style: preserve-3d; will-change: transform;
   animation: float 6s ease-in-out infinite;
 }
@@ -179,11 +179,12 @@ h3 { font-size: 20px; font-weight: 700; }
 .cw-pink { --c1: #3a2530; --c2: #16101a; --glow: rgba(242, 166, 194, .45); }
 .cw-purple { --c1: #2c2540; --c2: #120f1a; --glow: rgba(185, 162, 234, .45); }
 .cw-media {
-  height: clamp(300px, 30vw, 420px); padding: 32px; display: grid; place-items: center;
+  position: relative; height: clamp(300px, 34vw, 460px);
   background: radial-gradient(closest-side, var(--glow), transparent 75%);
 }
 .cw-media img {
-  height: 100%; object-fit: contain;
+  position: absolute; inset: 32px; width: calc(100% - 64px); height: calc(100% - 64px);
+  object-fit: contain;
   filter: drop-shadow(0 30px 30px rgba(0,0,0,.5));
   transition: transform .3s ease-out;
 }
@@ -193,7 +194,7 @@ h3 { font-size: 20px; font-weight: 700; }
 .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
 .duo-media { position: relative; perspective: 1200px; height: clamp(420px, 52vw, 720px); display: grid; place-items: center; }
 .duo-media canvas, .duo-media .fallback {
-  height: clamp(400px, 48vw, 680px); width: auto; aspect-ratio: 339 / 659;
+  height: clamp(400px, 48vw, 680px); width: auto; aspect-ratio: 579 / 1132;
   filter: drop-shadow(0 40px 40px rgba(0,0,0,.5));
   animation: float 7s ease-in-out infinite;
 }
@@ -249,6 +250,7 @@ h3 { font-size: 20px; font-weight: 700; }
   .logo { font-size: 24px; }
   .hero { grid-template-columns: 1fr; padding-top: 96px; padding-bottom: 150px; text-align: left; }
   .stage { height: 62vh; order: -1; }
+  .tilt { width: min(100%, calc(62vh * 0.735)); }
   .swatches { bottom: 40px; right: auto; left: var(--gutter); }
   .swatch { width: 66px; height: 66px; }
   .swatch-label { left: 0; right: auto; }

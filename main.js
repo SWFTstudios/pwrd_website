@@ -180,8 +180,8 @@
 
   // ---------- Hero ----------
   const COLORWAYS = {
-    purple: { img: "assets/img/pwrd-purple.png", depth: "assets/img/pwrd-purple-depth.png", label: "Purple" },
-    pink: { img: "assets/img/pwrd-pink.png", depth: "assets/img/pwrd-pink-depth.png", label: "Pink" },
+    purple: { img: "assets/img/pwrd-purple.webp", depth: "assets/img/pwrd-purple-depth.png", label: "Purple" },
+    pink: { img: "assets/img/pwrd-pink.webp", depth: "assets/img/pwrd-pink-depth.png", label: "Pink" },
   };
 
   const tilt = document.getElementById("tilt");
@@ -196,10 +196,11 @@
     try {
       hero = new DepthViewer(heroCanvas, { strength: 0.045 });
       await hero.load(COLORWAYS.purple.img, COLORWAYS.purple.depth);
+      tilt.style.aspectRatio = hero.aspect;
       viewers.push({ v: hero, el: tilt, tiltEl: tilt, deg: 14 });
 
       const duo = new DepthViewer(duoCanvas, { strength: 0.05 });
-      await duo.load("assets/img/pwrd-duo.png", "assets/img/pwrd-duo-depth.png");
+      await duo.load("assets/img/pwrd-duo.webp", "assets/img/pwrd-duo-depth.png");
       viewers.push({ v: duo, el: duoCanvas, tiltEl: duoCanvas, deg: 8 });
     } catch (err) {
       console.warn("Falling back to static images:", err);
@@ -251,6 +252,8 @@
         heroCanvas.style.opacity = 0;
         await new Promise((r) => setTimeout(r, 300));
         await hero.load(COLORWAYS[key].img, COLORWAYS[key].depth);
+        tilt.style.aspectRatio = hero.aspect;
+        hero.resize();
         heroCanvas.style.opacity = 1;
       }
       switching = false;
