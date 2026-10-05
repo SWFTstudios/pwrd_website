@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PWRD. Glitter Headphones</title>
+  <meta name="description" content="PWRD. Glitter Headphones — wireless over-ear sound with glitter-filled ear cups that move when you do. 11-hour battery, built-in mic, foldable." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-colorway="purple">
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <header class="nav">
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#top">Home</a>
+      <a href="#colorways">Colorways</a>
+      <a href="#features">Features</a>
+      <a href="#specs">Specs</a>
+    </nav>
+    <a class="logo" href="#top" aria-label="PWRD home">PWRD<span>.</span></a>
+    <div class="nav-icons">
+      <button aria-label="Search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+      <button aria-label="Account"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></button>
+      <button aria-label="Bag"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></button>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero" id="top">
+      <div class="hero-copy">
+        <p class="eyebrow">PWRD. Glitter Headphones</p>
+        <h1>
+          <span class="solid">Sound that</span>
+          <span class="solid">sparkles</span>
+          <span class="dim">every time</span>
+          <span class="dim">you move.</span>
+        </h1>
+        <p class="lede">Wireless over-ear headphones with glitter-filled ear cups that shift and shimmer as you go. Crisp sound, deep bass, and 11 hours of play.</p>
+        <a class="cta" href="#colorways">
+          <span class="cta-icon"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+          Discover More
+          <svg class="chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>
+        </a>
+      </div>
+
+      <div class="stage" id="stage">
+        <div class="stage-shadow" aria-hidden="true"></div>
+        <div class="tilt" id="tilt">
+          <canvas id="hero-canvas" aria-label="PWRD glitter headphones, interactive 3D view" role="img"></canvas>
+          <img id="hero-fallback" class="fallback" src="assets/img/pwrd-purple.png" alt="PWRD glitter headphones in purple" />
+        </div>
+        <p class="stage-hint">Move your cursor or drag to look around</p>
+      </div>
+
+      <div class="swatches" role="radiogroup" aria-label="Choose colorway">
+        <button class="swatch is-active" role="radio" aria-checked="true" data-colorway="purple" aria-label="Purple">
+          <img src="assets/img/pwrd-purple.png" alt="" />
+        </button>
+        <button class="swatch" role="radio" aria-checked="false" data-colorway="pink" aria-label="Pink">
+          <img src="assets/img/pwrd-pink.png" alt="" />
+        </button>
+        <span class="swatch-label" id="swatch-label">Purple</span>
+      </div>
+    </section>
+
+    <!-- QUICK STATS -->
+    <section class="stats" aria-label="Highlights">
+      <div><strong>11h</strong><span>Battery life</span></div>
+      <div><strong>BT</strong><span>Wireless Bluetooth</span></div>
+      <div><strong>Mic</strong><span>Built-in microphone</span></div>
+      <div><strong>0.88 lb</strong><span>Foldable &amp; light</span></div>
+    </section>
+
+    <!-- COLORWAYS -->
+    <section class="colorways" id="colorways">
+      <div class="section-head">
+        <p class="eyebrow">Two colorways</p>
+        <h2>Pick your <span class="dim">shimmer.</span></h2>
+      </div>
+      <div class="cw-grid">
+        <article class="cw-card cw-pink" data-depth-card>
+          <div class="cw-media"><img src="assets/img/pwrd-pink.png" alt="PWRD glitter headphones in pink" /></div>
+          <div class="cw-info">
+            <h3>Pink</h3>
+            <p>Rose-metallic cups packed with pink glitter that drifts like a snow globe.</p>
+          </div>
+        </article>
+        <article class="cw-card cw-purple" data-depth-card>
+          <div class="cw-media"><img src="assets/img/pwrd-purple.png" alt="PWRD glitter headphones in purple" /></div>
+          <div class="cw-info">
+            <h3>Purple</h3>
+            <p>Lilac band and chrome-purple cups with violet glitter that catches the light.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- DUO / MOTION -->
+    <section class="duo">
+      <div class="duo-media">
+        <canvas id="duo-canvas" aria-label="Pink and purple PWRD headphones linked together" role="img"></canvas>
+        <img id="duo-fallback" class="fallback" src="assets/img/pwrd-duo.png" alt="Pink and purple PWRD headphones linked together" />
+      </div>
+      <div class="duo-copy">
+        <p class="eyebrow">Made to be seen</p>
+        <h2>Glitter that <span class="dim">moves with you.</span></h2>
+        <p>Every ear cup holds loose glitter sealed behind a clear shell. Tilt your head, the sparkle follows. The look stands out, and the sound is just as good.</p>
+        <ul class="ticks">
+          <li>Over-ear design with soft PU ear pads</li>
+          <li>Folds flat for your bag</li>
+          <li>Works with Apple and Android devices</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features" id="features">
+      <div class="section-head">
+        <p class="eyebrow">Why PWRD.</p>
+        <h2>Built for everyday <span class="dim">listening.</span></h2>
+      </div>
+      <div class="feat-grid">
+        <article><span class="num">01</span><h3>Crisp sound</h3><p>Clear, immersive audio with deep bass for music, videos and calls.</p></article>
+        <article><span class="num">02</span><h3>Quick Bluetooth</h3><p>Pairs with your phone fast and holds a stable wireless connection.</p></article>
+        <article><span class="num">03</span><h3>Glitter style</h3><p>Eye-catching, colorful ear cups that make every outfit louder.</p></article>
+        <article><span class="num">04</span><h3>Clear microphone</h3><p>Built-in mic so your voice comes through clean on calls and in game chat.</p></article>
+      </div>
+    </section>
+
+    <!-- GALLERY -->
+    <section class="gallery" aria-label="Lifestyle photos">
+      <figure class="g-tall"><img src="assets/img/lifestyle-pink-neck.webp" alt="Pink PWRD headphones worn around the neck" loading="lazy" /></figure>
+      <figure><img src="assets/img/lifestyle-purple-vanity.webp" alt="Purple PWRD headphones on a vanity" loading="lazy" /></figure>
+      <figure><img src="assets/img/lifestyle-pink-vanity.webp" alt="Pink PWRD headphones on a vanity" loading="lazy" /></figure>
+    </section>
+
+    <!-- SPECS -->
+    <section class="specs" id="specs">
+      <div class="section-head">
+        <p class="eyebrow">Specifications</p>
+        <h2>The <span class="dim">details.</span></h2>
+      </div>
+      <dl class="spec-table">
+        <div><dt>Headphone style</dt><dd>Over-ear</dd></div>
+        <div><dt>Wireless</dt><dd>Bluetooth</dd></div>
+        <div><dt>Battery life</dt><dd>11 hours</dd></div>
+        <div><dt>Battery</dt><dd>Integrated rechargeable</dd></div>
+        <div><dt>Accessories</dt><dd>USB-C charging cable</dd></div>
+        <div><dt>Features</dt><dd>Built-in microphone, foldable</dd></div>
+        <div><dt>Ear pad material</dt><dd>PU</dd></div>
+        <div><dt>Body material</dt><dd>ABS</dd></div>
+        <div><dt>Dimensions (L × W × H)</dt><dd>8.19 × 2.28 × 9.06 in</dd></div>
+        <div><dt>Weight</dt><dd>0.88 lb</dd></div>
+        <div><dt>Works with</dt><dd>Apple devices, Android devices</dd></div>
+        <div><dt>Recommended use</dt><dd>Casual listening, video gaming, classroom</dd></div>
+        <div><dt>Colors</dt><dd>Pink, Purple</dd></div>
+        <div><dt>Age group</dt><dd>Teen, adult</dd></div>
+      </dl>
+    </section>
+
+    <!-- CTA -->
+    <section class="closer">
+      <h2>Turn it up. <span class="dim">Let it shine.</span></h2>
+      <a class="cta" href="#top">
+        <span class="cta-icon"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+        Shop PWRD.
+        <svg class="chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>
+      </a>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span class="logo small">PWRD<span>.</span></span>
+    <span>© 2026 PWRD. All rights reserved.</span>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
