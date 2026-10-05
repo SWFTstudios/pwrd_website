@@ -1,0 +1,13 @@
+{
+  "name": "pwrd-website",
+  "private": true,
+  "description": "Static PWRD. landing page served as Cloudflare Worker assets",
+  "scripts": {
+    "build": "node -e \"console.log('static site; nothing to build')\"",
+    "deploy": "wrangler deploy",
+    "preview": "wrangler versions upload"
+  },
+  "devDependencies": {
+    "wrangler": "^4.147.0"
+  }
+}

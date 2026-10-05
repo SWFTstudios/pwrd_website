@@ -46,9 +46,13 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
 
 /* ---------- NAV ---------- */
 .nav {
-  position: absolute; top: 0; left: 0; right: 0; z-index: 10;
+  position: fixed; top: 0; left: 0; right: 0; z-index: 20;
   display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
-  padding: 28px var(--gutter);
+  padding: 20px var(--gutter);
+  background: rgba(13, 11, 16, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 .nav-links { display: flex; gap: 32px; font-size: 15px; }
 .nav-links a { opacity: 0.85; transition: opacity .2s; }
@@ -85,12 +89,34 @@ h1 span { display: block; }
   background: var(--lime); color: var(--lime-ink);
   font-weight: 600; font-size: 16px;
   box-shadow: 0 10px 40px -10px rgba(216, 243, 106, 0.55);
-  transition: transform .25s ease, box-shadow .25s ease;
+  transition: transform .25s ease, box-shadow .25s ease, background .25s ease, color .25s ease, border-color .25s ease;
 }
 .cta:hover { transform: translateY(-2px); box-shadow: 0 16px 50px -10px rgba(216, 243, 106, 0.7); }
 .cta-icon { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: #fff; }
 .cta-icon svg { width: 18px; height: 18px; stroke-width: 2; }
 .cta .chev { width: 16px; height: 16px; stroke-width: 2.2; }
+.cta-ghost {
+  padding: 14px 22px;
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: none;
+}
+.cta-ghost:hover {
+  border-color: var(--lime);
+  color: var(--lime);
+  box-shadow: none;
+}
+.cta-compact {
+  margin-top: 18px;
+  padding: 12px 18px;
+  font-size: 14px;
+  box-shadow: none;
+}
+.product-ctas {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 14px;
+}
+.product-ctas-center { justify-content: center; }
 
 .stage {
   position: relative; height: min(78vh, 760px);
@@ -189,6 +215,18 @@ h3 { font-size: 20px; font-weight: 700; }
 }
 .cw-info { padding: 0 32px 32px; }
 .cw-info p { margin: 8px 0 0; color: #cfc9d4; max-width: 420px; }
+.cw-card { cursor: pointer; transition: border-color .3s ease, transform .3s ease; }
+.cw-card.is-selected { border-color: var(--tint); box-shadow: 0 0 0 1px var(--tint-soft); }
+.cw-card a { cursor: pointer; }
+a.cw-card {
+  display: block; color: inherit;
+}
+a.cw-card:focus-visible {
+  outline: 2px solid var(--lime); outline-offset: 4px;
+}
+
+.page-product .product-hero { min-height: auto; padding-bottom: 100px; }
+.page-product .cw-card { cursor: pointer; }
 
 .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
 .duo-media { position: relative; perspective: 1200px; height: clamp(420px, 52vw, 720px); display: grid; place-items: center; }
@@ -265,6 +303,8 @@ h3 { font-size: 20px; font-weight: 700; }
   .stats div { padding: 22px 12px; }
   .footer { flex-direction: column; align-items: flex-start; }
   .lede { font-size: 16px; }
+  .product-ctas .cta { width: 100%; justify-content: center; }
+  .cta-ghost { padding-left: 22px; padding-right: 22px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }

@@ -3,24 +3,24 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PWRD. Glitter Headphones</title>
-  <meta name="description" content="PWRD. Glitter Headphones — wireless over-ear sound with glitter-filled ear cups that move when you do. 11-hour battery, built-in mic, foldable." />
+  <title>PWRD. Liquid Glitter Headphones — Shop Pink &amp; Purple</title>
+  <meta name="description" content="Shop PWRD. Liquid Glitter Wireless Bluetooth Headphones at Walmart. Over-ear with microphone, 11-hour battery, pink or purple glitter cups." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body data-colorway="purple">
+<body class="page-product" data-colorway="pink" data-page="product">
   <div class="bg-glow" aria-hidden="true"></div>
 
   <header class="nav">
     <nav class="nav-links" aria-label="Primary">
-      <a href="#top">Home</a>
-      <a href="#colorways">Colorways</a>
+      <a href="index.html">Home</a>
+      <a href="index.html#colorways">Colorways</a>
       <a href="#features">Features</a>
       <a href="#specs">Specs</a>
     </nav>
-    <a class="logo" href="#top" aria-label="PWRD home">PWRD<span>.</span></a>
+    <a class="logo" href="index.html" aria-label="PWRD home">PWRD<span>.</span></a>
     <div class="nav-icons">
       <button aria-label="Search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
       <button aria-label="Account"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></button>
@@ -29,45 +29,56 @@
   </header>
 
   <main>
-    <!-- HERO -->
-    <section class="hero" id="top">
+    <section class="hero product-hero" id="top">
       <div class="hero-copy">
-        <p class="eyebrow">PWRD. Glitter Headphones</p>
+        <p class="eyebrow">PWRD. · Available at Walmart</p>
         <h1>
-          <span class="solid">Sound that</span>
-          <span class="solid">sparkles</span>
-          <span class="dim">every time</span>
-          <span class="dim">you move.</span>
+          <span class="solid">Liquid glitter</span>
+          <span class="solid">headphones</span>
+          <span class="dim" id="product-color-line">in pink.</span>
         </h1>
-        <p class="lede">Wireless over-ear headphones with glitter-filled ear cups that shift and shimmer as you go. Crisp sound, deep bass, and 11 hours of play.</p>
-        <a class="cta" href="#colorways">
-          <span class="cta-icon"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
-          Discover More
-          <svg class="chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>
-        </a>
+        <p class="lede">Wireless over-ear Bluetooth headphones with liquid glitter cups, a built-in mic, and 11 hours of play. Pick pink or purple — then shop it on Walmart.</p>
+
+        <div class="product-ctas" role="group" aria-label="Shop on Walmart">
+          <a class="cta"
+             id="cta-primary"
+             href="https://www.walmart.com/ip/PWRD-Pink-Liquid-Glitter-Wireless-Bluetooth-Headphones-Over-Ear-with-Microphone/19459660128"
+             target="_blank"
+             rel="noopener noreferrer">
+            <span class="cta-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/><path d="M6 6 5 3H2"/></svg></span>
+            <span id="cta-primary-label">Shop Pink Walmart</span>
+            <svg class="chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>
+          </a>
+          <a class="cta cta-ghost"
+             id="cta-secondary"
+             href="https://www.walmart.com/ip/PWRD-Pink-Liquid-Glitter-Wireless-Bluetooth-Headphones-Over-Ear-with-Microphone/19416250961"
+             target="_blank"
+             rel="noopener noreferrer">
+            Shop Purple Walmart
+          </a>
+        </div>
       </div>
 
       <div class="stage" id="stage">
         <div class="stage-shadow" aria-hidden="true"></div>
         <div class="tilt" id="tilt">
           <canvas id="hero-canvas" aria-label="PWRD glitter headphones, interactive 3D view" role="img"></canvas>
-          <img id="hero-fallback" class="fallback" src="assets/img/pwrd-purple.png" alt="PWRD glitter headphones in purple" />
+          <img id="hero-fallback" class="fallback" src="assets/img/pwrd-pink.png" alt="PWRD glitter headphones in pink" />
         </div>
         <p class="stage-hint">Move your cursor or drag to look around</p>
       </div>
 
       <div class="swatches" role="radiogroup" aria-label="Choose colorway">
-        <button class="swatch is-active" role="radio" aria-checked="true" data-colorway="purple" aria-label="Purple">
-          <img src="assets/img/pwrd-purple.png" alt="" />
-        </button>
-        <button class="swatch" role="radio" aria-checked="false" data-colorway="pink" aria-label="Pink">
+        <button class="swatch is-active" role="radio" aria-checked="true" data-colorway="pink" aria-label="Pink">
           <img src="assets/img/pwrd-pink.png" alt="" />
         </button>
-        <span class="swatch-label" id="swatch-label">Purple</span>
+        <button class="swatch" role="radio" aria-checked="false" data-colorway="purple" aria-label="Purple">
+          <img src="assets/img/pwrd-purple.png" alt="" />
+        </button>
+        <span class="swatch-label" id="swatch-label">Pink</span>
       </div>
     </section>
 
-    <!-- QUICK STATS -->
     <section class="stats" aria-label="Highlights">
       <div><strong>11h</strong><span>Battery life</span></div>
       <div><strong>BT</strong><span>Wireless Bluetooth</span></div>
@@ -75,51 +86,41 @@
       <div><strong>0.88 lb</strong><span>Foldable &amp; light</span></div>
     </section>
 
-    <!-- COLORWAYS -->
-    <section class="colorways" id="colorways">
+    <section class="colorways product-colorways" id="colorways">
       <div class="section-head">
         <p class="eyebrow">Two colorways</p>
         <h2>Pick your <span class="dim">shimmer.</span></h2>
       </div>
       <div class="cw-grid">
-        <a class="cw-card cw-pink" href="product.html?color=pink" data-depth-card>
+        <article class="cw-card cw-pink is-selected" data-depth-card data-select-colorway="pink">
           <div class="cw-media"><img src="assets/img/pwrd-pink.png" alt="PWRD glitter headphones in pink" /></div>
           <div class="cw-info">
             <h3>Pink</h3>
             <p>Rose-metallic cups packed with pink glitter that drifts like a snow globe.</p>
-            <span class="cta cta-compact">Shop Pink</span>
+            <a class="cta cta-compact"
+               href="https://www.walmart.com/ip/PWRD-Pink-Liquid-Glitter-Wireless-Bluetooth-Headphones-Over-Ear-with-Microphone/19459660128"
+               target="_blank"
+               rel="noopener noreferrer">
+              Shop Pink Walmart
+            </a>
           </div>
-        </a>
-        <a class="cw-card cw-purple" href="product.html?color=purple" data-depth-card>
+        </article>
+        <article class="cw-card cw-purple" data-depth-card data-select-colorway="purple">
           <div class="cw-media"><img src="assets/img/pwrd-purple.png" alt="PWRD glitter headphones in purple" /></div>
           <div class="cw-info">
             <h3>Purple</h3>
             <p>Lilac band and chrome-purple cups with violet glitter that catches the light.</p>
-            <span class="cta cta-compact">Shop Purple</span>
+            <a class="cta cta-compact"
+               href="https://www.walmart.com/ip/PWRD-Pink-Liquid-Glitter-Wireless-Bluetooth-Headphones-Over-Ear-with-Microphone/19416250961"
+               target="_blank"
+               rel="noopener noreferrer">
+              Shop Purple Walmart
+            </a>
           </div>
-        </a>
+        </article>
       </div>
     </section>
 
-    <!-- DUO / MOTION -->
-    <section class="duo">
-      <div class="duo-media">
-        <canvas id="duo-canvas" aria-label="Pink and purple PWRD headphones linked together" role="img"></canvas>
-        <img id="duo-fallback" class="fallback" src="assets/img/pwrd-duo.png" alt="Pink and purple PWRD headphones linked together" />
-      </div>
-      <div class="duo-copy">
-        <p class="eyebrow">Made to be seen</p>
-        <h2>Glitter that <span class="dim">moves with you.</span></h2>
-        <p>Every ear cup holds loose glitter sealed behind a clear shell. Tilt your head, the sparkle follows. The look stands out, and the sound is just as good.</p>
-        <ul class="ticks">
-          <li>Over-ear design with soft PU ear pads</li>
-          <li>Folds flat for your bag</li>
-          <li>Works with Apple and Android devices</li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- FEATURES -->
     <section class="features" id="features">
       <div class="section-head">
         <p class="eyebrow">Why PWRD.</p>
@@ -128,19 +129,17 @@
       <div class="feat-grid">
         <article><span class="num">01</span><h3>Crisp sound</h3><p>Clear, immersive audio with deep bass for music, videos and calls.</p></article>
         <article><span class="num">02</span><h3>Quick Bluetooth</h3><p>Pairs with your phone fast and holds a stable wireless connection.</p></article>
-        <article><span class="num">03</span><h3>Glitter style</h3><p>Eye-catching, colorful ear cups that make every outfit louder.</p></article>
+        <article><span class="num">03</span><h3>Glitter style</h3><p>Eye-catching liquid glitter cups that shift as you move.</p></article>
         <article><span class="num">04</span><h3>Clear microphone</h3><p>Built-in mic so your voice comes through clean on calls and in game chat.</p></article>
       </div>
     </section>
 
-    <!-- GALLERY -->
     <section class="gallery" aria-label="Lifestyle photos">
       <figure class="g-tall"><img src="assets/img/lifestyle-pink-neck.webp" alt="Pink PWRD headphones worn around the neck" loading="lazy" /></figure>
       <figure><img src="assets/img/lifestyle-purple-vanity.webp" alt="Purple PWRD headphones on a vanity" loading="lazy" /></figure>
       <figure><img src="assets/img/lifestyle-pink-vanity.webp" alt="Pink PWRD headphones on a vanity" loading="lazy" /></figure>
     </section>
 
-    <!-- SPECS -->
     <section class="specs" id="specs">
       <div class="section-head">
         <p class="eyebrow">Specifications</p>
@@ -164,14 +163,14 @@
       </dl>
     </section>
 
-    <!-- CTA -->
     <section class="closer">
-      <h2>Turn it up. <span class="dim">Let it shine.</span></h2>
-      <div class="product-ctas product-ctas-center">
+      <h2>Ready to <span class="dim">sparkle?</span></h2>
+      <div class="product-ctas product-ctas-center" role="group" aria-label="Shop on Walmart">
         <a class="cta"
            href="https://www.walmart.com/ip/PWRD-Pink-Liquid-Glitter-Wireless-Bluetooth-Headphones-Over-Ear-with-Microphone/19459660128"
            target="_blank"
-           rel="noopener noreferrer">
+           rel="noopener noreferrer"
+           data-shop-color="pink">
           <span class="cta-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/><path d="M6 6 5 3H2"/></svg></span>
           Shop Pink Walmart
           <svg class="chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>
@@ -179,7 +178,8 @@
         <a class="cta cta-ghost"
            href="https://www.walmart.com/ip/PWRD-Pink-Liquid-Glitter-Wireless-Bluetooth-Headphones-Over-Ear-with-Microphone/19416250961"
            target="_blank"
-           rel="noopener noreferrer">
+           rel="noopener noreferrer"
+           data-shop-color="purple">
           Shop Purple Walmart
         </a>
       </div>
@@ -187,7 +187,7 @@
   </main>
 
   <footer class="footer">
-    <span class="logo small">PWRD<span>.</span></span>
+    <a class="logo small" href="index.html">PWRD<span>.</span></a>
     <span>© 2026 PWRD. All rights reserved.</span>
   </footer>
 
