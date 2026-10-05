@@ -1,5 +1,4 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
   "name": "pwrd-website",
   "compatibility_date": "2026-10-01",
   // Plain static site: serve the repo root as assets.
