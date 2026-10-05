@@ -4,5 +4,6 @@
   // Plain static site: serve the repo root as assets.
   "assets": {
     "directory": "."
-  }
+  },
+  "previews": {}
 }
