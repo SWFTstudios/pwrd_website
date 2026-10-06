@@ -184,12 +184,14 @@
       img: "assets/img/pwrd-purple.webp",
       depth: "assets/img/pwrd-purple-depth.png",
       label: "Purple",
+      name: "Purple Liquid Glitter",
       walmart: "https://www.walmart.com/ip/PWRD-Pink-Liquid-Glitter-Wireless-Bluetooth-Headphones-Over-Ear-with-Microphone/19416250961",
     },
     pink: {
       img: "assets/img/pwrd-pink.webp",
       depth: "assets/img/pwrd-pink-depth.png",
       label: "Pink",
+      name: "Pink Liquid Glitter",
       walmart: "https://www.walmart.com/ip/PWRD-Pink-Liquid-Glitter-Wireless-Bluetooth-Headphones-Over-Ear-with-Microphone/19459660128",
     },
   };
@@ -219,30 +221,191 @@
   function syncProductUI(key) {
     const other = key === "pink" ? "purple" : "pink";
     if (label) label.textContent = COLORWAYS[key].label;
-    if (productColorLine) productColorLine.textContent = `in ${COLORWAYS[key].label.toLowerCase()}.`;
+    if (productColorLine) productColorLine.textContent = COLORWAYS[key].name;
+    document.querySelectorAll("[data-color-name]").forEach((el) => (el.textContent = COLORWAYS[key].name));
     if (ctaPrimary && ctaPrimaryLabel) {
       ctaPrimary.href = COLORWAYS[key].walmart;
-      ctaPrimaryLabel.textContent = `Shop ${COLORWAYS[key].label} Walmart`;
+      ctaPrimaryLabel.textContent = `Shop ${COLORWAYS[key].name}`;
     }
     if (ctaSecondary) {
       ctaSecondary.href = COLORWAYS[other].walmart;
-      ctaSecondary.textContent = `Shop ${COLORWAYS[other].label} Walmart`;
+      ctaSecondary.textContent = `Shop ${COLORWAYS[other].name}`;
     }
+    renderGallery(key);
     document.querySelectorAll("[data-select-colorway]").forEach((card) => {
       card.classList.toggle("is-selected", card.dataset.selectColorway === key);
     });
     if (isProductPage) {
+      // Mirror the Walmart listing title so the hand-off reads as the same product.
+      document.title = `PWRD ${COLORWAYS[key].name} Wireless Bluetooth Headphones, Over Ear with Microphone | PWRD.`;
       const url = new URL(location.href);
       url.searchParams.set("color", key);
       history.replaceState(null, "", url);
     }
   }
 
+  // ---------- PDP gallery + lightbox ----------
+  // `cutout` images are transparent product shots; everything else is shown as shot.
+  const G = "assets/img/gallery/";
+  const GALLERY = {
+    pink: [
+      { src: "assets/img/pwrd-pink.webp", alt: "PWRD Pink Liquid Glitter wireless headphones, side view", cutout: true },
+      { src: G + "pink/pink-features.avif", alt: "PWRD Pink Liquid Glitter headphones features: Bluetooth 5.3, built-in microphone, USB-C charging, foldable, up to 6–11 hours of playtime" },
+      { src: G + "pink/pink-earcup.webp", alt: "Close-up of the PWRD Pink Liquid Glitter ear cushion and on-ear controls", cutout: true },
+      { src: G + "pink/pink-ports.webp", alt: "PWRD Pink Liquid Glitter ear cup with microphone, aux and USB-C ports", cutout: true },
+      { src: G + "pink/pink-lifestyle-neck.avif", alt: "PWRD Pink Liquid Glitter headphones worn around the neck" },
+      { src: G + "pink/pink-lifestyle-tote.avif", alt: "PWRD Pink Liquid Glitter headphones clipped to a tote bag" },
+      { src: G + "pink/pink-lifestyle-vanity.avif", alt: "PWRD Pink Liquid Glitter headphones on a vanity" },
+      { src: G + "pink/pink-lifestyle-flatlay.avif", alt: "PWRD Pink Liquid Glitter headphones in a flat lay with a sweatshirt and water bottle" },
+    ],
+    purple: [
+      { src: "assets/img/pwrd-purple.webp", alt: "PWRD Purple Liquid Glitter wireless headphones, side view", cutout: true },
+      { src: G + "purple/purple-front.webp", alt: "PWRD Purple Liquid Glitter wireless headphones, front view", cutout: true },
+      { src: G + "purple/purple-features.avif", alt: "PWRD Purple Liquid Glitter headphones features: Bluetooth 5.3, built-in microphone, USB-C charging, foldable, up to 6–11 hours of playtime" },
+      { src: G + "purple/purple-controls.avif", alt: "PWRD Purple Liquid Glitter over-ear design with on-ear controls explained" },
+      { src: G + "purple/purple-earcup.webp", alt: "Close-up of the PWRD Purple Liquid Glitter ear cushion and on-ear controls", cutout: true },
+      { src: G + "purple/purple-ports.webp", alt: "PWRD Purple Liquid Glitter ear cup with microphone, aux and USB-C ports", cutout: true },
+      { src: G + "purple/purple-lifestyle-worn.avif", alt: "PWRD Purple Liquid Glitter headphones being worn" },
+      { src: G + "purple/purple-lifestyle-neck.avif", alt: "PWRD Purple Liquid Glitter headphones worn around the neck" },
+      { src: G + "purple/purple-lifestyle-vanity.avif", alt: "PWRD Purple Liquid Glitter headphones on a vanity" },
+      { src: G + "purple/purple-lifestyle-flatlay.avif", alt: "PWRD Purple Liquid Glitter headphones in a flat lay with a sweatshirt and water bottle" },
+    ],
+  };
+
+  const grid = document.getElementById("pdp-grid");
+  const galleryCount = document.getElementById("gallery-count");
+  const galleryColorName = document.getElementById("gallery-color-name");
+  const lb = document.getElementById("lightbox");
+  const lbTrack = document.getElementById("lb-track");
+  const lbThumbs = document.getElementById("lb-thumbs");
+  const lbCounter = document.getElementById("lb-counter");
+  let galleryKey = null;
+  let lbIndex = 0;
+  let lbOpener = null;
+
+  function renderGallery(key) {
+    if (!grid || galleryKey === key) return;
+    galleryKey = key;
+    const items = GALLERY[key];
+    if (galleryColorName) galleryColorName.textContent = COLORWAYS[key].name;
+    if (galleryCount) galleryCount.textContent = items.length;
+    grid.innerHTML = "";
+    items.forEach((item, i) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "pdp-tile" + (item.cutout ? " is-cutout" : "") + (i === 0 ? " is-lead" : "");
+      btn.setAttribute("role", "listitem");
+      btn.setAttribute("aria-label", `View photo ${i + 1} of ${items.length}: ${item.alt}`);
+      const img = document.createElement("img");
+      img.src = item.src;
+      img.alt = "";
+      img.loading = i < 3 ? "eager" : "lazy";
+      img.decoding = "async";
+      btn.appendChild(img);
+      btn.addEventListener("click", () => openLightbox(i, btn));
+      grid.appendChild(btn);
+    });
+    grid.scrollLeft = 0;
+    if (lbTrack) buildLightbox(items);
+  }
+
+  function buildLightbox(items) {
+    lbTrack.innerHTML = "";
+    lbThumbs.innerHTML = "";
+    items.forEach((item, i) => {
+      const slide = document.createElement("figure");
+      slide.className = "lb-slide" + (item.cutout ? " is-cutout" : "");
+      slide.setAttribute("aria-roledescription", "slide");
+      const img = document.createElement("img");
+      img.dataset.src = item.src;
+      img.alt = item.alt;
+      img.decoding = "async";
+      slide.appendChild(img);
+      lbTrack.appendChild(slide);
+
+      const th = document.createElement("button");
+      th.type = "button";
+      th.className = "lb-thumb" + (item.cutout ? " is-cutout" : "");
+      th.setAttribute("role", "tab");
+      th.setAttribute("aria-label", `Photo ${i + 1}`);
+      const ti = document.createElement("img");
+      ti.src = item.src;
+      ti.alt = "";
+      ti.loading = "lazy";
+      th.appendChild(ti);
+      th.addEventListener("click", () => goTo(i));
+      lbThumbs.appendChild(th);
+    });
+  }
+
+  function goTo(i, { instant } = {}) {
+    const n = lbTrack.children.length;
+    lbIndex = (i + n) % n;
+    lbTrack.style.transition = instant || reduceMotion ? "none" : "";
+    lbTrack.style.transform = `translateX(${-lbIndex * 100}%)`;
+    // Load the current slide and its neighbours.
+    [lbIndex - 1, lbIndex, lbIndex + 1].forEach((j) => {
+      const img = lbTrack.children[(j + n) % n].querySelector("img");
+      if (!img.src) img.src = img.dataset.src;
+    });
+    [...lbTrack.children].forEach((s, j) => s.setAttribute("aria-hidden", j !== lbIndex));
+    [...lbThumbs.children].forEach((t, j) => {
+      t.classList.toggle("is-active", j === lbIndex);
+      t.setAttribute("aria-selected", j === lbIndex);
+    });
+    lbThumbs.children[lbIndex].scrollIntoView({ block: "nearest", inline: "center", behavior: instant ? "auto" : "smooth" });
+    lbCounter.textContent = `${lbIndex + 1} / ${n}`;
+  }
+
+  function openLightbox(i, opener) {
+    if (!lb) return;
+    lbOpener = opener;
+    document.documentElement.classList.add("lb-open");
+    lb.showModal();
+    goTo(i, { instant: true });
+    document.getElementById("lb-close").focus();
+  }
+
+  if (lb) {
+    lb.addEventListener("close", () => {
+      document.documentElement.classList.remove("lb-open");
+      if (lbOpener) lbOpener.focus();
+    });
+    document.getElementById("lb-close").addEventListener("click", () => lb.close());
+    document.getElementById("lb-prev").addEventListener("click", () => goTo(lbIndex - 1));
+    document.getElementById("lb-next").addEventListener("click", () => goTo(lbIndex + 1));
+    lb.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft") { e.preventDefault(); goTo(lbIndex - 1); }
+      if (e.key === "ArrowRight") { e.preventDefault(); goTo(lbIndex + 1); }
+    });
+    // Swipe / drag between photos.
+    const swipe = { x: 0, dx: 0, active: false };
+    lbTrack.addEventListener("pointerdown", (e) => {
+      Object.assign(swipe, { x: e.clientX, dx: 0, active: true });
+      lbTrack.style.transition = "none";
+    });
+    window.addEventListener("pointermove", (e) => {
+      if (!swipe.active) return;
+      swipe.dx = e.clientX - swipe.x;
+      lbTrack.style.transform = `translateX(calc(${-lbIndex * 100}% + ${swipe.dx}px))`;
+    });
+    const endSwipe = () => {
+      if (!swipe.active) return;
+      swipe.active = false;
+      const threshold = Math.min(80, lbTrack.clientWidth * 0.15);
+      if (swipe.dx < -threshold) goTo(lbIndex + 1);
+      else if (swipe.dx > threshold) goTo(lbIndex - 1);
+      else goTo(lbIndex);
+    };
+    window.addEventListener("pointerup", endSwipe);
+    window.addEventListener("pointercancel", endSwipe);
+  }
+
   async function setup() {
     syncProductUI(initialColor);
     if (heroFallback) {
       heroFallback.src = COLORWAYS[initialColor].img;
-      heroFallback.alt = `PWRD glitter headphones in ${COLORWAYS[initialColor].label.toLowerCase()}`;
+      heroFallback.alt = `PWRD ${COLORWAYS[initialColor].name} wireless headphones`;
     }
     document.querySelectorAll(".swatch").forEach((b) => {
       const on = b.dataset.colorway === initialColor;
@@ -309,7 +472,7 @@
     syncProductUI(key);
     if (heroFallback) {
       heroFallback.src = COLORWAYS[key].img;
-      heroFallback.alt = `PWRD glitter headphones in ${COLORWAYS[key].label.toLowerCase()}`;
+      heroFallback.alt = `PWRD ${COLORWAYS[key].name} wireless headphones`;
     }
     if (hero && heroCanvas) {
       heroCanvas.style.opacity = 0;
