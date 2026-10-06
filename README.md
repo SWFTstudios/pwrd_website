@@ -1,8 +1,8 @@
 # PWRD. Website
 
-Landing page and product page for the **PWRD. Liquid Glitter Headphones**, in Pink Liquid Glitter and Purple Liquid Glitter.
+Website for **PWRD.** products, all sold on Walmart.com: the **Liquid Glitter Headphones** (Pink Liquid Glitter and Purple Liquid Glitter) and the **3 in 1 LED Wireless Charger with Headphone Stand**.
 
-Plain HTML/CSS/JS, so there is no build step. Pages: `index.html`, `product.html` (both colorways), `pink.html`, `purple.html`, `colorways.html`, `features.html`, `specs.html`. Open them through any static server:
+Plain HTML/CSS/JS, so there is no build step. Pages: `index.html`, `shop.html` (all products), `support.html` (FAQ), product pages `pink.html`, `purple.html`, `product.html` (both headphone colorways) and `led-charger-stand.html`, plus headphone pages `colorways.html`, `features.html`, `specs.html` (linked from the footer). The top nav is just Shop and Support, plus Instagram and TikTok. Open them through any static server:
 
 ```bash
 python3 -m http.server 5178
@@ -28,9 +28,16 @@ To use a true 3D model later (for example a `.glb` from a 3D scan or an image-to
 | `lifestyle-*.webp` | Lifestyle photos |
 | `gallery/<color>/*` | Product page gallery. `.webp` files are white-background product shots turned into transparent cutouts; `.avif` files are lifestyle and infographic images, copied unaltered. The list and order live in `GALLERY` in `main.js`. |
 
+## Adding a product
+
+1. Add photos under `assets/img/gallery/<product>/` (cut out white-background shots with the script below) and list them under a new key in `GALLERY` in `main.js`.
+2. Create its page from `led-charger-stand.html`: point the gallery at the new key with `data-gallery`, and the reviews at a new `reviews/<product>.json` with `data-src`.
+3. Copy a card in `shop.html` and set its `data-category` (add a filter button for a new category).
+4. Add the page to `sitemap.xml`, and an FAQ group to `support.html` if needed.
+
 ## Reviews carousel
 
-`reviews.json` holds the review cards on the product pages (`product.html`, `pink.html`, `purple.html`). Quotes are verbatim excerpts from Walmart.com, trimmed only with ellipses. The rating summary ("4.6 ★ from 204 ratings") is written in each page's HTML, so update it there when Walmart's count changes. All current reviews are incentivized, so keep the disclosure line under the carousel. Don't add `AggregateRating` structured data for these, because they're third-party reviews.
+`reviews/headphones.json` and `reviews/led-charger-stand.json` hold the review cards on the product pages; each reviews section picks its file with `data-src`. Quotes are verbatim excerpts from Walmart.com, trimmed only with ellipses. The rating summary (for example "4.6 ★ from 204 ratings") is written in each page's HTML, so update it there when Walmart's count changes. All current reviews are incentivized, so keep the disclosure line under the carousel. Don't add `AggregateRating` structured data for these, because they're third-party reviews.
 
 ## Making cutouts from white-background photos
 
