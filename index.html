@@ -25,6 +25,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <script>
+    /* Motion setup (see motion.js). Runs before first paint so animated content starts hidden;
+       if motion.js doesn't load, everything is shown again. */
+    (function (c) {
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      c.add("motion");
+      try { if (!sessionStorage.getItem("pwrd-intro")) c.add("intro"); } catch (e) {}
+      setTimeout(function () { if (!window.pwrdMotion) c.remove("motion", "intro", "intro-mounted"); }, 3500);
+    })(document.documentElement.classList);
+  </script>
+  <script src="motion.js" defer></script>
 </head>
 <body data-colorway="purple">
   <div class="bg-glow" aria-hidden="true"></div>
