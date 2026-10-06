@@ -1,6 +1,6 @@
 # PWRD. Website
 
-Landing page for the **PWRD. Glitter Headphones**, in pink and purple.
+Landing page and product page for the **PWRD. Liquid Glitter Headphones**, in Pink Liquid Glitter and Purple Liquid Glitter.
 
 Plain HTML/CSS/JS, so there is no build step. Open `index.html` through any static server:
 
@@ -27,3 +27,12 @@ To use a true 3D model later (for example a `.glb` from a 3D scan or an image-to
 | `pwrd-duo.webp` | Both colorways linked, transparent (from the 2000px studio photo) |
 | `pwrd-purple-top.png`, `pwrd-pink-top.png` | Transparent top-down shots |
 | `lifestyle-*.webp`, `duo-studio.webp` | Lifestyle / studio photos |
+| `gallery/<color>/*` | Product page gallery. `.webp` files are white-background product shots turned into transparent cutouts; `.avif` files are lifestyle and infographic images, copied unaltered. The list and order live in `GALLERY` in `main.js`. |
+
+## Making cutouts from white-background photos
+
+```bash
+python3 scripts/remove-white-bg.py path/to/photo.avif --out assets/img/gallery/pink
+```
+
+Only white connected to the edges (plus large enclosed gaps, like under the headband) is removed, so white details on the product stay. Needs `pillow`, `numpy` and `scipy`.
