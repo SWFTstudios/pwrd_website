@@ -185,7 +185,7 @@
       depth: "assets/img/pwrd-purple-depth.png",
       label: "Purple",
       name: "Purple Liquid Glitter",
-      walmart: "https://www.walmart.com/ip/PWRD-Pink-Liquid-Glitter-Wireless-Bluetooth-Headphones-Over-Ear-with-Microphone/19416250961",
+      walmart: "https://www.walmart.com/ip/PWRD-Purple-Liquid-Glitter-Wireless-Bluetooth-Headphones-Over-Ear-with-Microphone/19416250961",
     },
     pink: {
       img: "assets/img/pwrd-pink.webp",
@@ -275,6 +275,21 @@
   const grid = document.getElementById("pdp-grid");
   const galleryCount = document.getElementById("gallery-count");
   const galleryColorName = document.getElementById("gallery-color-name");
+  if (grid) {
+    document.body.insertAdjacentHTML("beforeend", `
+      <dialog class="lightbox" id="lightbox" aria-label="Photo viewer">
+        <div class="lb-top">
+          <span class="lb-counter" id="lb-counter" aria-live="polite"></span>
+          <button class="lb-btn lb-close" id="lb-close" aria-label="Close photo viewer"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+        </div>
+        <div class="lb-stage">
+          <button class="lb-btn lb-nav lb-prev" id="lb-prev" aria-label="Previous photo"><svg viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></svg></button>
+          <div class="lb-track" id="lb-track"></div>
+          <button class="lb-btn lb-nav lb-next" id="lb-next" aria-label="Next photo"><svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></button>
+        </div>
+        <div class="lb-thumbs" id="lb-thumbs" role="tablist" aria-label="Photos"></div>
+      </dialog>`);
+  }
   const lb = document.getElementById("lightbox");
   const lbTrack = document.getElementById("lb-track");
   const lbThumbs = document.getElementById("lb-thumbs");
@@ -460,12 +475,14 @@
       b.setAttribute("aria-checked", on);
     });
 
+    if (!heroCanvas && !duoCanvas) return;
     try {
-      if (!heroCanvas) throw new Error("No hero canvas");
-      hero = new DepthViewer(heroCanvas, { strength: 0.045 });
-      await hero.load(COLORWAYS[initialColor].img, COLORWAYS[initialColor].depth);
-      tilt.style.aspectRatio = hero.aspect;
-      viewers.push({ v: hero, el: tilt, tiltEl: tilt, deg: 14 });
+      if (heroCanvas) {
+        hero = new DepthViewer(heroCanvas, { strength: 0.045 });
+        await hero.load(COLORWAYS[initialColor].img, COLORWAYS[initialColor].depth);
+        tilt.style.aspectRatio = hero.aspect;
+        viewers.push({ v: hero, el: tilt, tiltEl: tilt, deg: 14 });
+      }
 
       if (duoCanvas) {
         const duo = new DepthViewer(duoCanvas, { strength: 0.05 });
@@ -504,7 +521,7 @@
 
   // Colorway switching with a quick fade.
   let switching = false;
-  async function setColorway(key, { fromSwatch } = {}) {
+  async function setColorway(key) {
     if (switching || !COLORWAYS[key] || document.body.dataset.colorway === key) {
       if (document.body.dataset.colorway === key) syncProductUI(key);
       return;
@@ -529,21 +546,11 @@
       hero.resize();
       heroCanvas.style.opacity = 1;
     }
-    if (fromSwatch) {
-      /* no-op: keeps API explicit for callers */
-    }
     switching = false;
   }
 
   document.querySelectorAll(".swatch").forEach((btn) => {
-    btn.addEventListener("click", () => setColorway(btn.dataset.colorway, { fromSwatch: true }));
-  });
-
-  document.querySelectorAll("[data-select-colorway]").forEach((card) => {
-    card.addEventListener("click", (e) => {
-      if (e.target.closest("a")) return;
-      setColorway(card.dataset.selectColorway);
-    });
+    btn.addEventListener("click", () => setColorway(btn.dataset.colorway));
   });
 
   // Drag on the stage to "turn" the headphones on touch screens.

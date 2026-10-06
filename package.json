@@ -1,7 +1,7 @@
 {
   "name": "pwrd-website",
   "private": true,
-  "description": "Static PWRD. landing page served as Cloudflare Worker assets",
+  "description": "Static PWRD. website served as Cloudflare Worker assets",
   "scripts": {
     "build": "node -e \"console.log('static site; nothing to build')\"",
     "deploy": "wrangler deploy",

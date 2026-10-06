@@ -62,7 +62,6 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
 .logo span { color: var(--tint); transition: color .6s; }
 .logo.small { font-size: 18px; }
 .nav-icons { display: flex; justify-content: flex-end; gap: 22px; }
-.nav-icons button { opacity: 0.9; }
 
 /* ---------- HERO ---------- */
 .hero {
@@ -219,7 +218,6 @@ h3 { font-size: 20px; font-weight: 700; }
 .cw-info p { margin: 8px 0 0; color: #cfc9d4; max-width: 420px; }
 .cw-card { cursor: pointer; transition: border-color .3s ease, transform .3s ease; }
 .cw-card.is-selected { border-color: var(--tint); box-shadow: 0 0 0 1px var(--tint-soft); }
-.cw-card a { cursor: pointer; }
 a.cw-card {
   display: block; color: inherit;
 }
@@ -252,6 +250,12 @@ a.cw-card:focus-visible {
 .duo-media { position: relative; perspective: 1200px; height: clamp(420px, 52vw, 720px); display: grid; place-items: center; }
 .duo-media canvas, .duo-media .fallback {
   height: clamp(400px, 48vw, 680px); width: auto; aspect-ratio: 579 / 1132;
+  filter: drop-shadow(0 40px 40px rgba(0,0,0,.5));
+  animation: float 7s ease-in-out infinite;
+}
+/* Static duo images (pages without the 3D canvas) keep their natural proportions. */
+.duo-media .duo-still {
+  width: min(100%, 460px); height: auto; max-height: clamp(400px, 48vw, 680px); object-fit: contain;
   filter: drop-shadow(0 40px 40px rgba(0,0,0,.5));
   animation: float 7s ease-in-out infinite;
 }

@@ -2,7 +2,7 @@
 
 Landing page and product page for the **PWRD. Liquid Glitter Headphones**, in Pink Liquid Glitter and Purple Liquid Glitter.
 
-Plain HTML/CSS/JS, so there is no build step. Open `index.html` through any static server:
+Plain HTML/CSS/JS, so there is no build step. Pages: `index.html`, `product.html` (both colorways), `pink.html`, `purple.html`, `colorways.html`, `features.html`, `specs.html`. Open them through any static server:
 
 ```bash
 python3 -m http.server 5178
@@ -25,8 +25,7 @@ To use a true 3D model later (for example a `.glb` from a 3D scan or an image-to
 | --- | --- |
 | `pwrd-purple.webp`, `pwrd-pink.webp` | Transparent product cutouts from the 2000px product photos (hero + colorway cards) |
 | `pwrd-duo.webp` | Both colorways linked, transparent (from the 2000px studio photo) |
-| `pwrd-purple-top.png`, `pwrd-pink-top.png` | Transparent top-down shots |
-| `lifestyle-*.webp`, `duo-studio.webp` | Lifestyle / studio photos |
+| `lifestyle-*.webp` | Lifestyle photos |
 | `gallery/<color>/*` | Product page gallery. `.webp` files are white-background product shots turned into transparent cutouts; `.avif` files are lifestyle and infographic images, copied unaltered. The list and order live in `GALLERY` in `main.js`. |
 
 ## Reviews carousel
