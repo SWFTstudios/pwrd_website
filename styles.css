@@ -529,6 +529,7 @@ section.shop { padding-top: 0 !important; padding-bottom: clamp(80px, 10vw, 140p
 
 /* ---------- LED CHARGER STAND ---------- */
 .stand-visual { position: relative; }
+.stand-promo .product-ctas { margin-top: 32px; }
 .stand-visual::before {
   content: ""; position: absolute; inset: 15% 20%; border-radius: 50%; z-index: -1;
   background: conic-gradient(from 90deg, #ff4fd8, #7a5cff, #2fd2ff, #3dff9a, #ffd23d, #ff7a3d, #ff4fd8);
@@ -585,6 +586,7 @@ section.shop { padding-top: 0 !important; padding-bottom: clamp(80px, 10vw, 140p
   .logo { font-size: 24px; }
   .page-sub .sub-hero { grid-template-columns: 1fr; padding-top: 110px; }
   .page-sub .sub-visual { order: -1; min-height: 48vh; }
+  .stand-promo .duo-media { order: -1; }
   .hero { grid-template-columns: 1fr; padding-top: 96px; padding-bottom: 150px; text-align: left; }
   .stage { height: 62vh; order: -1; }
   .tilt { width: min(100%, calc(62vh * 0.735)); }
