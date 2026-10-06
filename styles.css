@@ -517,8 +517,8 @@ section.shop { padding-top: 0 !important; padding-bottom: clamp(80px, 10vw, 140p
 /* Carousel: centered while the cards fit, scrolls (with arrows) once they don't. */
 .shop-carousel {
   position: relative; container-type: inline-size;
-  /* 3 cards across the content width on desktop; never narrower than 250px, so phones swipe. */
-  --card: clamp(250px, (100cqw - 50px) / 3, 380px);
+  /* 3 cards across the content width on desktop (up to 460px each); never narrower than 280px, so phones swipe. */
+  --card: clamp(280px, (100cqw - 50px) / 3, 460px);
 }
 .shop-carousel.is-overflowing .shop-scroller {
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 var(--gutter), #000 calc(100% - var(--gutter)), transparent);
@@ -563,8 +563,8 @@ section.shop { padding-top: 0 !important; padding-bottom: clamp(80px, 10vw, 140p
 .tint-purple { --glow: rgba(185, 162, 234, .4); }
 .tint-rgb { --glow: rgba(120, 160, 255, .35); }
 .shop-media img {
-  position: absolute; inset: 12%; width: 76%; height: 76%; object-fit: contain;
-  filter: drop-shadow(0 26px 30px rgba(0, 0, 0, .5));
+  position: absolute; inset: 5%; width: 90%; height: 90%; object-fit: contain;
+  filter: drop-shadow(0 18px 22px rgba(0, 0, 0, .5));
   transition: transform .5s ease;
 }
 .shop-card a:hover .shop-media { border-color: var(--tint); }
