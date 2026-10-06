@@ -26,6 +26,7 @@ To use a true 3D model later (for example a `.glb` from a 3D scan or an image-to
 | `pwrd-purple.webp`, `pwrd-pink.webp` | Transparent product cutouts from the 2000px product photos (hero + colorway cards) |
 | `pwrd-duo.webp` | Both colorways linked, transparent (from the 2000px studio photo) |
 | `lifestyle-*.webp` | Lifestyle photos |
+| `brand/pwrd-logo-white.svg` | Official PWRD. logo (with ™), vector paths taken from `PWRD_Logo.ai`. White, for the dark header and footer |
 | `gallery/<color>/*` | Product page gallery. `.webp` files are white-background product shots turned into transparent cutouts; `.avif` files are lifestyle and infographic images, copied unaltered. The list and order live in `GALLERY` in `main.js`. |
 
 ## Adding a product
