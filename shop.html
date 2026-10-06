@@ -67,39 +67,49 @@
       </div>
       <p class="shop-count" id="shop-count" aria-live="polite">3 products</p>
 
-      <!-- To add a product: copy one <li> card, then set its data-category to a filter above (add a new filter button for a new category). Keep data-featured to show it under Featured. -->
-      <ul class="shop-grid">
-        <li class="shop-card" data-category="headphones" data-featured>
-          <a href="pink.html">
-            <div class="shop-media tint-pink"><img src="assets/img/pwrd-pink.webp" alt="" width="810" height="1132" /></div>
-            <div class="shop-info">
-              <h2>Pink Liquid Glitter Wireless Headphones</h2>
-              <p>Over-ear · Bluetooth 5.3 · Built-in mic</p>
-              <span class="shop-link">View product <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span>
-            </div>
-          </a>
-        </li>
-        <li class="shop-card" data-category="headphones" data-featured>
-          <a href="purple.html">
-            <div class="shop-media tint-purple"><img src="assets/img/pwrd-purple.webp" alt="" width="832" height="1132" /></div>
-            <div class="shop-info">
-              <h2>Purple Liquid Glitter Wireless Headphones</h2>
-              <p>Over-ear · Bluetooth 5.3 · Built-in mic</p>
-              <span class="shop-link">View product <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span>
-            </div>
-          </a>
-        </li>
-        <li class="shop-card" data-category="chargers" data-featured>
-          <a href="led-charger-stand.html">
-            <div class="shop-media tint-rgb"><img src="assets/img/gallery/stand/stand-rgb.webp" alt="" width="1292" height="1600" /></div>
-            <div class="shop-info">
-              <h2>3 in 1 LED Wireless Charger with Headphone Stand</h2>
-              <p>Wireless charging · RGB light · Headset stand</p>
-              <span class="shop-link">View product <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span>
-            </div>
-          </a>
-        </li>
-      </ul>
+      <!-- To add a product: copy one <li> card, then set its data-category to a filter above (add a new filter button for a new category). Keep data-featured to show it under Featured. The row stays centered while the cards fit, and becomes a scrolling carousel with arrows once they don't. -->
+      <div class="shop-carousel">
+        <button type="button" class="carousel-btn carousel-prev" aria-label="Previous products" aria-controls="shop-scroller" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>
+        </button>
+        <div class="shop-scroller" id="shop-scroller">
+          <ul class="shop-track">
+            <li class="shop-card" data-category="headphones" data-featured>
+              <a href="pink.html">
+                <div class="shop-media tint-pink"><img src="assets/img/pwrd-pink.webp" alt="" width="810" height="1132" /></div>
+                <div class="shop-info">
+                  <h2>Pink Liquid Glitter Wireless Headphones</h2>
+                  <p>Over-ear · Bluetooth 5.3 · Built-in mic</p>
+                  <span class="shop-link">View product <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span>
+                </div>
+              </a>
+            </li>
+            <li class="shop-card" data-category="headphones" data-featured>
+              <a href="purple.html">
+                <div class="shop-media tint-purple"><img src="assets/img/pwrd-purple.webp" alt="" width="832" height="1132" /></div>
+                <div class="shop-info">
+                  <h2>Purple Liquid Glitter Wireless Headphones</h2>
+                  <p>Over-ear · Bluetooth 5.3 · Built-in mic</p>
+                  <span class="shop-link">View product <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span>
+                </div>
+              </a>
+            </li>
+            <li class="shop-card" data-category="chargers" data-featured>
+              <a href="led-charger-stand.html">
+                <div class="shop-media tint-rgb"><img src="assets/img/gallery/stand/stand-rgb.webp" alt="" width="1292" height="1600" /></div>
+                <div class="shop-info">
+                  <h2>3 in 1 LED Wireless Charger with Headphone Stand</h2>
+                  <p>Wireless charging · RGB light · Headset stand</p>
+                  <span class="shop-link">View product <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <button type="button" class="carousel-btn carousel-next" aria-label="Next products" aria-controls="shop-scroller" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+        </button>
+      </div>
     </section>
   </main>
 

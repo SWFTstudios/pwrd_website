@@ -498,6 +498,35 @@
   const filterButtons = [...document.querySelectorAll("[data-filter]")];
   const shopCards = [...document.querySelectorAll("[data-category]")];
   const shopCount = document.getElementById("shop-count");
+  const carousel = document.querySelector(".shop-carousel");
+  const scroller = document.getElementById("shop-scroller");
+  const prevBtn = carousel && carousel.querySelector(".carousel-prev");
+  const nextBtn = carousel && carousel.querySelector(".carousel-next");
+
+  // Arrows only appear when the visible cards overflow the row.
+  function updateCarousel() {
+    if (!scroller) return;
+    const max = scroller.scrollWidth - scroller.clientWidth;
+    const overflowing = max > 2;
+    carousel.classList.toggle("is-overflowing", overflowing);
+    prevBtn.hidden = nextBtn.hidden = !overflowing;
+    prevBtn.disabled = scroller.scrollLeft <= 2;
+    nextBtn.disabled = scroller.scrollLeft >= max - 2;
+  }
+  function scrollCarousel(dir) {
+    const card = scroller.querySelector(".shop-card:not([hidden])");
+    const step = card ? card.getBoundingClientRect().width + 24 : scroller.clientWidth;
+    // Move by all fully visible cards but one, so there's always context.
+    const amount = Math.max(step, Math.floor(scroller.clientWidth / step - 1) * step);
+    scroller.scrollBy({ left: dir * amount, behavior: reduceMotion ? "auto" : "smooth" });
+  }
+  if (scroller) {
+    prevBtn.addEventListener("click", () => scrollCarousel(-1));
+    nextBtn.addEventListener("click", () => scrollCarousel(1));
+    scroller.addEventListener("scroll", updateCarousel, { passive: true });
+    window.addEventListener("resize", updateCarousel);
+  }
+
   function applyFilter(filter) {
     let shown = 0;
     filterButtons.forEach((b) => b.setAttribute("aria-pressed", b.dataset.filter === filter));
@@ -507,6 +536,10 @@
       if (match) shown++;
     });
     if (shopCount) shopCount.textContent = `${shown} ${shown === 1 ? "product" : "products"}`;
+    if (scroller) {
+      scroller.scrollLeft = 0;
+      updateCarousel();
+    }
   }
   if (filterButtons.length) {
     filterButtons.forEach((b) => b.addEventListener("click", () => {
