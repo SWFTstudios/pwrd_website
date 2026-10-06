@@ -554,6 +554,49 @@
     filterFromHash();
   }
 
+  // ---------- Layout: the fixed nav's height, for sticky bars and anchor offsets ----------
+  const siteNav = document.querySelector(".nav");
+  const setVar = (name, px) => document.documentElement.style.setProperty(name, px + "px");
+  if (siteNav && "ResizeObserver" in window) {
+    // The nav compacts on scroll, so keep this live rather than measuring once.
+    new ResizeObserver(() => setVar("--nav-h", siteNav.offsetHeight)).observe(siteNav);
+  }
+
+  // ---------- Support page: sticky topic tabs, with the topic in view highlighted ----------
+  const jump = document.querySelector(".support-jump");
+  if (jump) {
+    const strip = jump.querySelector(".support-jump-links");
+    const links = [...jump.querySelectorAll('a[href^="#"]')];
+    const groups = links.map((a) => document.querySelector(a.getAttribute("href")));
+    if ("ResizeObserver" in window) new ResizeObserver(() => setVar("--jump-h", jump.offsetHeight)).observe(jump);
+    let current;
+    const updateJump = () => {
+      const navH = siteNav ? siteNav.offsetHeight : 0;
+      jump.classList.toggle("is-stuck", jump.getBoundingClientRect().top <= navH + 1);
+      // The active topic is the last group whose top has passed just below the tabs.
+      const line = navH + jump.offsetHeight + 24;
+      let active = null;
+      groups.forEach((g, i) => { if (g && g.getBoundingClientRect().top <= line) active = links[i]; });
+      const atBottom = innerHeight + scrollY >= document.documentElement.scrollHeight - 2;
+      if (atBottom) active = links[links.length - 1];
+      if (active === current) return;
+      current = active;
+      links.forEach((a) => (a === active ? a.setAttribute("aria-current", "true") : a.removeAttribute("aria-current")));
+      // On phones the tabs scroll sideways: keep the active one in view.
+      if (active && strip.scrollWidth > strip.clientWidth) {
+        strip.scrollTo({ left: active.offsetLeft - (strip.clientWidth - active.offsetWidth) / 2, behavior: reduceMotion ? "auto" : "smooth" });
+      }
+    };
+    let queued = false;
+    addEventListener("scroll", () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => { queued = false; updateJump(); });
+    }, { passive: true });
+    addEventListener("resize", updateJump);
+    updateJump();
+  }
+
   async function setup() {
     syncProductUI(initialColor);
     if (heroFallback) {
