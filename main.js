@@ -231,7 +231,8 @@
       ctaSecondary.href = COLORWAYS[other].walmart;
       ctaSecondary.textContent = `Shop ${COLORWAYS[other].name}`;
     }
-    renderGallery(key);
+    // A gallery pinned to one product (data-gallery) ignores colorway changes.
+    renderGallery((grid && grid.dataset.gallery) || key);
     document.querySelectorAll("[data-select-colorway]").forEach((card) => {
       card.classList.toggle("is-selected", card.dataset.selectColorway === key);
     });
@@ -270,6 +271,16 @@
       { src: G + "purple/purple-lifestyle-vanity.avif", alt: "PWRD Purple Liquid Glitter headphones on a vanity" },
       { src: G + "purple/purple-lifestyle-flatlay.avif", alt: "PWRD Purple Liquid Glitter headphones in a flat lay with a sweatshirt and water bottle" },
     ],
+    stand: [
+      { src: G + "stand/stand-rgb.webp", alt: "PWRD. 3 in 1 LED Wireless Charger with Headphone Stand lit in rainbow RGB, with its infrared remote", cutout: true },
+      { src: G + "stand/stand-light-modes.avif", alt: "Dynamic RGB lights: 16 light color modes with brightness control, plus Chase, Strobe, Fade and Smooth modes on the remote" },
+      { src: G + "stand/stand-compatibility.avif", alt: "Wireless charging pad compatible with iPhone 11 to 17, AirPods 2nd and 3rd gen, and Android devices. Infrared remote included" },
+      { src: G + "stand/stand-features.avif", alt: "PWRD Pink Liquid Glitter headphones on the stand: universal headset stand, wireless charging pad, compact design, USB power cord included" },
+      { src: G + "stand/stand-white.webp", alt: "PWRD. 3 in 1 LED Wireless Charger with Headphone Stand with a white light, and its remote", cutout: true },
+      { src: G + "stand/stand-lifestyle-gaming.avif", alt: "LED charger stand glowing on a gaming desk next to a keyboard" },
+      { src: G + "stand/stand-lifestyle-desk.avif", alt: "LED charger stand glowing pink on a desk with a phone charging on the base" },
+      { src: G + "stand/stand-lifestyle-bedside.avif", alt: "LED charger stand glowing orange on a nightstand: dimmer and brightener, 16 color functions, 4 light modes, infrared remote" },
+    ],
   };
 
   const grid = document.getElementById("pdp-grid");
@@ -302,7 +313,7 @@
     if (!grid || galleryKey === key) return;
     galleryKey = key;
     const items = GALLERY[key];
-    if (galleryColorName) galleryColorName.textContent = COLORWAYS[key].name;
+    if (galleryColorName && COLORWAYS[key]) galleryColorName.textContent = COLORWAYS[key].name;
     if (galleryCount) galleryCount.textContent = items.length;
     grid.innerHTML = "";
     items.forEach((item, i) => {
@@ -446,7 +457,7 @@
   }
 
   if (reviewsSection && reviewTrack) {
-    fetch("reviews.json")
+    fetch(reviewsSection.dataset.src || "reviews/headphones.json")
       .then((res) => (res.ok ? res.json() : Promise.reject(res.status)))
       .then((reviews) => {
         reviewTrack.append(...reviews.map((r) => reviewCard(r, false)), ...reviews.map((r) => reviewCard(r, true)));
@@ -461,6 +472,34 @@
       const paused = reviewsSection.classList.toggle("is-paused");
       toggle.querySelector("span").textContent = paused ? "Play reviews" : "Pause reviews";
     });
+  }
+
+  // ---------- Shop filters ----------
+  // Cards carry data-category (and data-featured); a #hash like shop.html#headphones preselects a filter.
+  const filterButtons = [...document.querySelectorAll("[data-filter]")];
+  const shopCards = [...document.querySelectorAll("[data-category]")];
+  const shopCount = document.getElementById("shop-count");
+  function applyFilter(filter) {
+    let shown = 0;
+    filterButtons.forEach((b) => b.setAttribute("aria-pressed", b.dataset.filter === filter));
+    shopCards.forEach((card) => {
+      const match = filter === "featured" ? card.hasAttribute("data-featured") : card.dataset.category === filter;
+      card.hidden = !match;
+      if (match) shown++;
+    });
+    if (shopCount) shopCount.textContent = `${shown} ${shown === 1 ? "product" : "products"}`;
+  }
+  if (filterButtons.length) {
+    filterButtons.forEach((b) => b.addEventListener("click", () => {
+      applyFilter(b.dataset.filter);
+      history.replaceState(null, "", b.dataset.filter === "featured" ? location.pathname : `#${b.dataset.filter}`);
+    }));
+    const filterFromHash = () => {
+      const fromHash = location.hash.slice(1);
+      applyFilter(filterButtons.some((b) => b.dataset.filter === fromHash) ? fromHash : "featured");
+    };
+    window.addEventListener("hashchange", filterFromHash);
+    filterFromHash();
   }
 
   async function setup() {
