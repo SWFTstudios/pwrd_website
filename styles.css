@@ -497,10 +497,42 @@ section.shop { padding-top: 0 !important; padding-bottom: clamp(80px, 10vw, 140p
 .shop-filters button[aria-pressed="true"] { color: var(--ink); border-color: var(--tint); font-weight: 600; }
 .shop-filters button:focus-visible { outline: 2px solid var(--lime); outline-offset: 2px; }
 .shop-count { margin: 18px 0 28px; text-align: center; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-dim); }
-.shop-grid {
-  list-style: none; margin: 0; padding: 0;
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 24px;
+/* Carousel: centered while the cards fit, scrolls (with arrows) once they don't. */
+.shop-carousel {
+  position: relative; container-type: inline-size;
+  /* 3 cards across the content width on desktop; never narrower than 250px, so phones swipe. */
+  --card: clamp(250px, (100cqw - 50px) / 3, 380px);
 }
+.shop-carousel.is-overflowing .shop-scroller {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 var(--gutter), #000 calc(100% - var(--gutter)), transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 var(--gutter), #000 calc(100% - var(--gutter)), transparent);
+}
+.shop-scroller {
+  overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter);
+  margin-inline: calc(var(--gutter) * -1);
+  scrollbar-width: none;
+}
+.shop-scroller::-webkit-scrollbar { display: none; }
+.shop-track {
+  list-style: none; margin: 0 auto; padding: 8px var(--gutter);
+  display: flex; gap: 24px; width: max-content;
+}
+.shop-track .shop-card { flex: 0 0 var(--card); scroll-snap-align: start; }
+.carousel-btn {
+  position: absolute; z-index: 2; top: calc(var(--card) / 2 + 8px);
+  display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%;
+  translate: 0 -50%;
+  background: rgba(13, 11, 16, .78); border: 1px solid rgba(255, 255, 255, .16);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  transition: opacity .2s, border-color .2s, background .2s;
+}
+.carousel-btn[hidden] { display: none; }
+.carousel-btn:hover:not(:disabled) { border-color: var(--lime); }
+.carousel-btn:disabled { opacity: .3; cursor: default; }
+.carousel-btn:focus-visible { outline: 2px solid var(--lime); outline-offset: 2px; }
+.carousel-prev { left: -12px; }
+.carousel-next { right: -12px; }
 .shop-card[hidden] { display: none; }
 .shop-card a { display: flex; flex-direction: column; height: 100%; border-radius: var(--radius); }
 .shop-card a:focus-visible { outline: 2px solid var(--lime); outline-offset: 4px; }
@@ -617,6 +649,7 @@ section.shop { padding-top: 0 !important; padding-bottom: clamp(80px, 10vw, 140p
   .review-card { flex-basis: 280px; }
   .faq-controls div { grid-template-columns: 1fr; gap: 2px; }
   .faq summary { font-size: 16px; }
+  .carousel-btn { display: none !important; }
   .reviews-sep { display: none; }
   .reviews-meta { flex-direction: column; align-items: flex-start; gap: 4px; }
 }
