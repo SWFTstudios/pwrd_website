@@ -401,6 +401,53 @@
     window.addEventListener("pointercancel", endSwipe);
   }
 
+  // ---------- Reviews marquee ----------
+  // The list is rendered twice so the CSS loop is seamless; the copy is hidden from assistive tech.
+  const reviewsSection = document.querySelector(".reviews");
+  const reviewTrack = document.getElementById("review-track");
+  const reviewDate = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
+
+  function reviewCard(r, hidden) {
+    const el = (tag, cls, text) => {
+      const n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (text != null) n.textContent = text;
+      return n;
+    };
+    const li = el("li", "review-card");
+    if (hidden) li.setAttribute("aria-hidden", "true");
+    const fig = el("figure");
+    const stars = el("div", "review-stars", "★".repeat(r.rating));
+    stars.setAttribute("role", "img");
+    stars.setAttribute("aria-label", `${r.rating} out of 5 stars`);
+    const cap = el("figcaption");
+    const who = el("span", "review-name", r.name);
+    if (r.date) who.appendChild(el("span", "review-date", reviewDate.format(new Date(r.date))));
+    cap.append(who);
+    if (r.tag) cap.append(el("span", "review-tag", r.tag));
+    fig.append(stars, el("blockquote", null, `“${r.quote}”`), cap);
+    li.appendChild(fig);
+    return li;
+  }
+
+  if (reviewsSection && reviewTrack) {
+    fetch("reviews.json")
+      .then((res) => (res.ok ? res.json() : Promise.reject(res.status)))
+      .then((reviews) => {
+        reviewTrack.append(...reviews.map((r) => reviewCard(r, false)), ...reviews.map((r) => reviewCard(r, true)));
+      })
+      .catch((err) => {
+        console.warn("Reviews unavailable:", err);
+        reviewsSection.hidden = true;
+      });
+
+    const toggle = reviewsSection.querySelector(".reviews-toggle");
+    toggle.addEventListener("click", () => {
+      const paused = reviewsSection.classList.toggle("is-paused");
+      toggle.querySelector("span").textContent = paused ? "Play reviews" : "Pause reviews";
+    });
+  }
+
   async function setup() {
     syncProductUI(initialColor);
     if (heroFallback) {
