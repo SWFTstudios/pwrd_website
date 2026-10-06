@@ -36,6 +36,17 @@ To use a true 3D model later (for example a `.glb` from a 3D scan or an image-to
 3. Copy a card in `shop.html` and set its `data-category` (add a filter button for a new category).
 4. Add the page to `sitemap.xml`, and an FAQ group to `support.html` if needed.
 
+## Motion
+
+`motion.js` (loaded on every page) handles all animation, with shared timing and easing:
+
+- **Intro:** on the first page load of a session, glitter settles in a liquid-glitter ear cup, then the cup opens onto the page. Click or press a key to skip.
+- **Page transitions:** cross-document View Transitions keep the nav in place while the page slides and fades (Chrome, Edge, Safari 18.2+). Other browsers get a quick fade-out.
+- **Reveals:** headings rise in word by word, eyebrows wipe in, stats count up, and cards, photos and FAQ items fade up in order as they scroll into view.
+- **Hover and press:** glitter sheen on buttons, a pointer spotlight on cards, link underlines, and a glitter burst on press. The header compacts on scroll.
+
+A small inline script in each page's `<head>` turns motion on before first paint, so content starts hidden instead of flashing. Motion is skipped entirely for `prefers-reduced-motion`, and if `motion.js` fails to load, everything is shown. To animate a new kind of element, add its selector to `REVEAL` in `motion.js` and to the matching list in the MOTION section of `styles.css`.
+
 ## Reviews carousel
 
 `reviews/headphones.json` and `reviews/led-charger-stand.json` hold the review cards on the product pages; each reviews section picks its file with `data-src`. Quotes are verbatim excerpts from Walmart.com, trimmed only with ellipses. The rating summary (for example "4.6 ★ from 204 ratings") is written in each page's HTML, so update it there when Walmart's count changes. All current reviews are incentivized, so keep the disclosure line under the carousel. Don't add `AggregateRating` structured data for these, because they're third-party reviews.
