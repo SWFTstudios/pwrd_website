@@ -29,6 +29,10 @@ To use a true 3D model later (for example a `.glb` from a 3D scan or an image-to
 | `lifestyle-*.webp`, `duo-studio.webp` | Lifestyle / studio photos |
 | `gallery/<color>/*` | Product page gallery. `.webp` files are white-background product shots turned into transparent cutouts; `.avif` files are lifestyle and infographic images, copied unaltered. The list and order live in `GALLERY` in `main.js`. |
 
+## Reviews carousel
+
+`reviews.json` holds the review cards on the product pages (`product.html`, `pink.html`, `purple.html`). Quotes are verbatim excerpts from Walmart.com, trimmed only with ellipses. The rating summary ("4.6 ★ from 204 ratings") is written in each page's HTML, so update it there when Walmart's count changes. All current reviews are incentivized, so keep the disclosure line under the carousel. Don't add `AggregateRating` structured data for these, because they're third-party reviews.
+
 ## Making cutouts from white-background photos
 
 ```bash
