@@ -286,7 +286,8 @@
   const grid = document.getElementById("pdp-grid");
   const galleryCount = document.getElementById("gallery-count");
   const galleryColorName = document.getElementById("gallery-color-name");
-  if (grid) {
+  const photoGroups = [...document.querySelectorAll("[data-lightbox]")];
+  if (grid || photoGroups.length) {
     document.body.insertAdjacentHTML("beforeend", `
       <dialog class="lightbox" id="lightbox" aria-label="Photo viewer">
         <div class="lb-top">
@@ -308,6 +309,7 @@
   let galleryKey = null;
   let lbIndex = 0;
   let lbOpener = null;
+  let lbItems = null;
 
   function renderGallery(key) {
     if (!grid || galleryKey === key) return;
@@ -328,11 +330,10 @@
       img.loading = i < 3 ? "eager" : "lazy";
       img.decoding = "async";
       btn.appendChild(img);
-      btn.addEventListener("click", () => openLightbox(i, btn));
+      btn.addEventListener("click", () => openLightbox(items, i, btn));
       grid.appendChild(btn);
     });
     grid.scrollLeft = 0;
-    if (lbTrack) buildLightbox(items);
   }
 
   function buildLightbox(items) {
@@ -383,8 +384,12 @@
     lbCounter.textContent = `${lbIndex + 1} / ${n}`;
   }
 
-  function openLightbox(i, opener) {
+  function openLightbox(items, i, opener) {
     if (!lb) return;
+    if (items !== lbItems) {
+      buildLightbox(items);
+      lbItems = items;
+    }
     lbOpener = opener;
     document.documentElement.classList.add("lb-open");
     lb.showModal();
@@ -426,6 +431,20 @@
     window.addEventListener("pointerup", endSwipe);
     window.addEventListener("pointercancel", endSwipe);
   }
+
+  // Static photo grids (e.g. the home page lifestyle photos) open in the same viewer.
+  photoGroups.forEach((group) => {
+    const links = [...group.querySelectorAll("a[href]")];
+    const items = links.map((a) => ({ src: a.getAttribute("href"), alt: a.querySelector("img").alt }));
+    links.forEach((a, i) => {
+      a.setAttribute("aria-haspopup", "dialog");
+      a.setAttribute("aria-label", `View photo ${i + 1} of ${links.length}: ${items[i].alt}`);
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        openLightbox(items, i, a);
+      });
+    });
+  });
 
   // ---------- Reviews marquee ----------
   // The list is rendered twice so the CSS loop is seamless; the copy is hidden from assistive tech.
