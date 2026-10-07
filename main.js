@@ -190,15 +190,82 @@
   };
 
   window.addEventListener("pointermove", (e) => {
-    if (dragging || reduceMotion) return;
+    if (dragging || reduceMotion || e.pointerType === "touch") return; // touch scrolls; phones use tilt
     if (!pointerOverStage(e.clientX, e.clientY)) return;
     const look = lookFromStage(e.clientX, e.clientY);
     if (look) setInput(look.x, look.y);
   });
-  window.addEventListener("deviceorientation", (e) => {
-    if (e.gamma == null || reduceMotion) return;
-    setInput(e.gamma / 30, (e.beta - 45) / 30);
-  });
+  // ---------- Phones: tilt to look around, shake to make the glitter slosh ----------
+  // Whatever angle the phone is held at counts as "center"; the baseline drifts slowly
+  // toward the current pose, so it re-centers when the user changes how they hold it.
+  const isTouch = matchMedia("(hover: none) and (pointer: coarse)").matches;
+  const shake = { x: 0, y: 0, vx: 0, vy: 0 };
+  let tiltBase = null;
+  let motionOn = false;
+
+  function onOrientation(e) {
+    if (e.gamma == null || e.beta == null || reduceMotion) return;
+    if (!tiltBase) tiltBase = { b: e.beta, g: e.gamma };
+    tiltBase.b += (e.beta - tiltBase.b) * 0.004;
+    tiltBase.g += (e.gamma - tiltBase.g) * 0.004;
+    let dx = (e.gamma - tiltBase.g) / 22, dy = (e.beta - tiltBase.b) / 22;
+    // Landscape: the axes swap relative to the screen.
+    const angle = (screen.orientation && screen.orientation.angle) || window.orientation || 0;
+    if (angle === 90) [dx, dy] = [dy, -dx];
+    else if (angle === -90 || angle === 270) [dx, dy] = [-dy, dx];
+    setInput(dx, dy);
+  }
+  function onMotion(e) {
+    const a = e.acceleration;
+    if (!a || a.x == null || reduceMotion) return;
+    // Ignore small movements (walking, hand tremor); a real shake is well above this.
+    const kick = (v) => (Math.abs(v) < 1.5 ? 0 : v);
+    shake.vx -= kick(a.x) * 0.025;
+    shake.vy += kick(a.y) * 0.025;
+  }
+  function enableMotion() {
+    if (motionOn) return;
+    motionOn = true;
+    window.addEventListener("deviceorientation", onOrientation);
+    window.addEventListener("devicemotion", onMotion);
+  }
+  // Springy decay for the shake offset (called every frame from the render loop).
+  function stepShake(dt) {
+    const k = 60, c = 6;
+    shake.vx += (-k * shake.x - c * shake.vx) * dt;
+    shake.vy += (-k * shake.y - c * shake.vy) * dt;
+    shake.x += shake.vx * dt;
+    shake.y += shake.vy * dt;
+  }
+
+  // iOS only shares motion after the visitor allows it, from a tap.
+  const needsPermission = typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function";
+  if (stage && isTouch && !reduceMotion) {
+    if (needsPermission) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "tilt-permission";
+      btn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M3 9c-1 2-1 4 0 6M21 9c1 2 1 4 0 6"/></svg><span>Tap to tilt &amp; shake</span>';
+      stage.appendChild(btn);
+      btn.addEventListener("click", async () => {
+        try {
+          const asks = [DeviceOrientationEvent.requestPermission()];
+          if (typeof DeviceMotionEvent !== "undefined" && typeof DeviceMotionEvent.requestPermission === "function") {
+            asks.push(DeviceMotionEvent.requestPermission());
+          }
+          const [orientation] = await Promise.all(asks);
+          if (orientation === "granted") enableMotion();
+        } catch (_) {
+          /* denied or unavailable: the idle drift keeps the hero alive */
+        }
+        btn.remove();
+      });
+    } else {
+      enableMotion();
+    }
+  } else if (!isTouch) {
+    enableMotion(); // tablets/laptops with sensors; harmless where there are none
+  }
 
   // Idle drift so the object feels alive when nobody's touching it.
   const idle = (t) => [Math.sin(t / 2200) * 0.55, Math.cos(t / 3100) * 0.35];
@@ -659,9 +726,15 @@
     requestAnimationFrame(loop);
   }
 
+  let lastFrame = 0;
   function loop(t) {
+    const dt = Math.min(0.05, lastFrame ? (t - lastFrame) / 1000 : 0);
+    lastFrame = t;
+    stepShake(dt);
     const useIdle = !input.active || t - input.last > 2500;
-    const [ix, iy] = useIdle ? idle(t) : [input.x, input.y];
+    const [bx, by] = useIdle ? idle(t) : [input.x, input.y];
+    const clamp = (v) => Math.max(-1.2, Math.min(1.2, v));
+    const ix = clamp(bx + shake.x), iy = clamp(by + shake.y);
     for (const item of viewers) {
       const r = item.el.getBoundingClientRect();
       if (r.bottom < 0 || r.top > innerHeight) continue; // offscreen: skip work
@@ -712,10 +785,10 @@
     btn.addEventListener("click", () => setColorway(btn.dataset.colorway));
   });
 
-  // Drag on the stage to "turn" the headphones (touch + mouse).
+  // Drag on the stage to "turn" the headphones (mouse and pen).
   if (stage) {
     stage.addEventListener("pointerdown", (e) => {
-      if (reduceMotion) return;
+      if (reduceMotion || e.pointerType === "touch") return; // phones: tilt instead, so swipes scroll
       if (e.button != null && e.button !== 0) return;
       dragging = true;
       const start = { x: e.clientX, y: e.clientY };
