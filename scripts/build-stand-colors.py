@@ -6,6 +6,9 @@ Uses one shared matte across all frames (dark shell + saturated lit arches),
 drops the floor shadow, de-fringes white edges, and crops every frame to the
 same bbox so crossfades stay locked.
 
+After building, run scripts/remove-stand-cable.py to erase the USB cable and re-crop
+(then update the 374/696 frame size in styles.css, main.js and the HTML if it changes).
+
 Usage:
   python3 scripts/build-stand-colors.py /path/to/PWRD0001R_folder
   python3 scripts/build-stand-colors.py /path/to/folder --out assets/img/stand-colors

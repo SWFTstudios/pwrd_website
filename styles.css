@@ -611,8 +611,9 @@ section.shop { padding-top: 0 !important; padding-bottom: clamp(80px, 10vw, 140p
 }
 .stand-stage {
   position: relative;
-  width: 100%;
-  aspect-ratio: 501 / 720;
+  /* Frames were 501px wide including the (now erased) cable; 374/501 keeps the stand the same size. */
+  width: calc(100% * 374 / 501);
+  aspect-ratio: 374 / 696;
   animation: float 7s ease-in-out infinite;
 }
 /* Contact shadow under the base — moves with the float so it stays planted */
@@ -620,7 +621,7 @@ section.shop { padding-top: 0 !important; padding-bottom: clamp(80px, 10vw, 140p
   content: "";
   position: absolute;
   left: 50%; bottom: 5.5%;
-  width: 52%; height: 7%;
+  width: 70%; height: 7%;
   transform: translateX(-50%);
   border-radius: 50%;
   background: radial-gradient(ellipse at center, rgba(0, 0, 0, .55) 0%, rgba(0, 0, 0, .22) 45%, transparent 72%);
