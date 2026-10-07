@@ -760,5 +760,444 @@
     });
   });
 
+  // ---------- Interactive LED stand color remote ----------
+  const STAND_BASE = "assets/img/stand-colors/";
+  // glow = sampled from lit arch; btn = remote face color for CSS --c
+  const STAND_COLORS = {
+    red: { name: "Red", glow: "#ff5056", btn: "#c51324", label: "R" },
+    green: { name: "Green", glow: "#8eda92", btn: "#3c7e42", label: "G" },
+    blue: { name: "Blue", glow: "#8cb7ff", btn: "#2b508f", label: "B" },
+    white: { name: "White", glow: "#f2f2f6", btn: "#e8e7e7", label: "W" },
+    "orange-red": { name: "Orange red", glow: "#ff655d", btn: "#c41e24" },
+    lime: { name: "Lime", glow: "#abed97", btn: "#5da44c" },
+    sky: { name: "Sky", glow: "#6fccff", btn: "#2c74bb" },
+    orange: { name: "Orange", glow: "#ff7d57", btn: "#c43e22" },
+    mint: { name: "Mint", glow: "#9ae6f9", btn: "#478899" },
+    violet: { name: "Violet", glow: "#e596da", btn: "#52224d" },
+    amber: { name: "Amber", glow: "#ff983c", btn: "#ce692a" },
+    cyan: { name: "Cyan", glow: "#88d8fc", btn: "#2d728f" },
+    magenta: { name: "Magenta", glow: "#f795d9", btn: "#6e2756" },
+    yellow: { name: "Yellow", glow: "#fff711", btn: "#e5c821" },
+    teal: { name: "Teal", glow: "#83c9e2", btn: "#3a8a96" },
+    pink: { name: "Pink", glow: "#ff74d4", btn: "#c23672" },
+  };
+
+  // 4×6 remote grid matching the physical IR remote.
+  // Chase/Strobe stay decorative; Fade/Smooth drive autoplay color cycles.
+  const STAND_REMOTE_GRID = [
+    [
+      { kind: "inert", label: "−", aria: "Brightness down (preview only)" },
+      { kind: "inert", label: "+", aria: "Brightness up (preview only)" },
+      { kind: "power", id: "off", label: "OFF", aria: "Turn light off", btn: "#1a1a1a" },
+      { kind: "power", id: "on", label: "ON", aria: "Turn light on", btn: "#d2272d" },
+    ],
+    [
+      { kind: "color", id: "red" },
+      { kind: "color", id: "green" },
+      { kind: "color", id: "blue" },
+      { kind: "color", id: "white" },
+    ],
+    [
+      { kind: "color", id: "orange-red" },
+      { kind: "color", id: "lime" },
+      { kind: "color", id: "sky" },
+      { kind: "inert", label: "CHASE", aria: "Chase mode (preview only)" },
+    ],
+    [
+      { kind: "color", id: "orange" },
+      { kind: "color", id: "mint" },
+      { kind: "color", id: "violet" },
+      { kind: "inert", label: "STROBE", aria: "Strobe mode (preview only)" },
+    ],
+    [
+      { kind: "color", id: "amber" },
+      { kind: "color", id: "cyan" },
+      { kind: "color", id: "magenta" },
+      { kind: "mode", id: "fade", label: "FADE", aria: "Fade through colors" },
+    ],
+    [
+      { kind: "color", id: "yellow" },
+      { kind: "color", id: "teal" },
+      { kind: "color", id: "pink" },
+      { kind: "mode", id: "smooth", label: "SMOOTH", aria: "Smooth color cycle" },
+    ],
+  ];
+
+  // Remote column order for mode cycles (skip off).
+  const STAND_COLOR_ORDER = [
+    "red", "orange-red", "orange", "amber", "yellow",
+    "green", "lime", "mint", "cyan", "teal",
+    "blue", "sky", "violet", "magenta", "pink", "white",
+  ];
+
+  const STAND_MODES = {
+    fade: { dwell: 2400, crossfade: reduceMotion ? 0 : 900 },
+    smooth: { dwell: 1100, crossfade: reduceMotion ? 0 : 500 },
+  };
+
+  const STAND_OFF = { frame: "off" };
+  const STAND_DEFAULT = "pink";
+  const STAND_FADE_MS = reduceMotion ? 0 : 350;
+  const STAND_PRESS_MS = 120;
+  const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+  function standFrameSrc(id) {
+    return `${STAND_BASE}stand-${id}.webp`;
+  }
+
+  function pressBtn(btn) {
+    btn.classList.add("is-pressing");
+    window.setTimeout(() => btn.classList.remove("is-pressing"), STAND_PRESS_MS);
+  }
+
+  function initStandDemo(root) {
+    const host = root.closest(".stand-visual") || root;
+    const front = root.querySelector("img.stand-frame") || root.querySelector("img");
+    if (!front) return;
+
+    // Frames live in a floating stage; remote sits below outside the float.
+    let stage = root.querySelector(".stand-stage");
+    if (!stage) {
+      stage = document.createElement("div");
+      stage.className = "stand-stage";
+      root.insertBefore(stage, front);
+      stage.appendChild(front);
+    }
+
+    front.classList.add("stand-frame", "is-front");
+    front.alt = front.alt || "PWRD. LED charger stand";
+    front.width = 501;
+    front.height = 720;
+    front.decoding = "async";
+
+    const back = document.createElement("img");
+    back.className = "stand-frame is-back";
+    back.alt = "";
+    back.width = 501;
+    back.height = 720;
+    back.decoding = "async";
+    back.setAttribute("aria-hidden", "true");
+    stage.insertBefore(back, front);
+
+    const remote = document.createElement("div");
+    remote.className = "stand-remote";
+    remote.setAttribute("role", "group");
+    remote.setAttribute("aria-label", "LED stand remote");
+
+    const face = document.createElement("div");
+    face.className = "stand-remote-face";
+
+    const colorGroup = document.createElement("div");
+    colorGroup.className = "stand-remote-grid";
+    colorGroup.setAttribute("role", "group");
+    colorGroup.setAttribute("aria-label", "Remote controls");
+
+    const colorButtons = {};
+    const modeButtons = {};
+    let onBtn = null;
+    let offBtn = null;
+
+    STAND_REMOTE_GRID.forEach((row) => {
+      row.forEach((cell) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "rbtn";
+
+        if (cell.kind === "color") {
+          const meta = STAND_COLORS[cell.id];
+          btn.classList.add("rbtn-color");
+          btn.dataset.standColor = cell.id;
+          btn.setAttribute("role", "radio");
+          btn.setAttribute("aria-checked", "false");
+          btn.setAttribute("aria-label", meta.name);
+          btn.style.setProperty("--c", meta.btn);
+          if (meta.label) {
+            btn.dataset.label = meta.label;
+            btn.textContent = meta.label;
+          }
+          colorGroup.appendChild(btn);
+          colorButtons[cell.id] = btn;
+          return;
+        }
+
+        if (cell.kind === "power") {
+          btn.classList.add("rbtn-power", cell.id === "on" ? "rbtn-on" : "rbtn-off");
+          btn.dataset.standPower = cell.id;
+          btn.setAttribute("aria-label", cell.aria);
+          btn.setAttribute("aria-pressed", cell.id === "on" ? "true" : "false");
+          btn.style.setProperty("--c", cell.btn);
+          btn.textContent = cell.label;
+          colorGroup.appendChild(btn);
+          if (cell.id === "on") onBtn = btn;
+          else offBtn = btn;
+          return;
+        }
+
+        if (cell.kind === "mode") {
+          btn.classList.add("rbtn-mode");
+          btn.dataset.standMode = cell.id;
+          btn.setAttribute("aria-label", cell.aria);
+          btn.setAttribute("aria-pressed", "false");
+          btn.style.setProperty("--c", "#8a8d92");
+          btn.textContent = cell.label;
+          colorGroup.appendChild(btn);
+          modeButtons[cell.id] = btn;
+          return;
+        }
+
+        // Inert: brightness / Chase / Strobe — visible for authenticity only.
+        btn.classList.add("rbtn-inert");
+        btn.setAttribute("aria-disabled", "true");
+        btn.setAttribute("aria-label", cell.aria);
+        btn.tabIndex = -1;
+        btn.disabled = true;
+        btn.style.setProperty("--c", "#6a6d72");
+        btn.textContent = cell.label;
+        colorGroup.appendChild(btn);
+      });
+    });
+
+    face.appendChild(colorGroup);
+    remote.appendChild(face);
+
+    const live = document.createElement("p");
+    live.className = "sr-only";
+    live.setAttribute("aria-live", "polite");
+    live.setAttribute("aria-atomic", "true");
+
+    root.appendChild(remote);
+    root.appendChild(live);
+
+    let current = STAND_DEFAULT;
+    let powered = true;
+    let busy = false;
+    let queued = null;
+    let frontEl = front;
+    let backEl = back;
+    let activeMode = null;
+    let modeTimer = null;
+    let modeCrossfade = STAND_FADE_MS;
+
+    const applyGlow = (id, on) => {
+      if (!on || id === STAND_OFF.frame) {
+        host.classList.add("is-stand-off");
+        host.classList.remove("has-stand-glow");
+        return;
+      }
+      host.classList.remove("is-stand-off");
+      host.classList.add("has-stand-glow");
+      host.style.setProperty("--stand-glow", STAND_COLORS[id]?.glow || "#ffffff");
+    };
+
+    const syncButtons = () => {
+      for (const [id, btn] of Object.entries(colorButtons)) {
+        const on = powered && id === current;
+        btn.setAttribute("aria-checked", on ? "true" : "false");
+        btn.classList.toggle("is-active", on);
+      }
+      for (const [id, btn] of Object.entries(modeButtons)) {
+        const on = activeMode === id;
+        btn.setAttribute("aria-pressed", on ? "true" : "false");
+        btn.classList.toggle("is-active", on);
+      }
+      if (onBtn) onBtn.setAttribute("aria-pressed", powered ? "true" : "false");
+      if (offBtn) offBtn.setAttribute("aria-pressed", powered ? "false" : "true");
+      remote.classList.toggle("is-off", !powered);
+      root.classList.toggle("is-mode-fade", activeMode === "fade");
+      root.classList.toggle("is-mode-smooth", activeMode === "smooth");
+    };
+
+    const announce = (id, on) => {
+      if (!on) live.textContent = "Stand light: Off";
+      else if (activeMode) live.textContent = `Stand light: ${STAND_COLORS[id]?.name || id} (${activeMode})`;
+      else live.textContent = `Stand light: ${STAND_COLORS[id]?.name || id}`;
+    };
+
+    const loadFrame = (img, src) =>
+      new Promise((resolve, reject) => {
+        if (img.getAttribute("src") === src && img.complete) {
+          resolve();
+          return;
+        }
+        const done = () => {
+          img.decode?.().then(resolve).catch(resolve);
+        };
+        img.onload = done;
+        img.onerror = reject;
+        img.src = src;
+        if (img.complete) done();
+      });
+
+    const showFrame = async (id, on, fadeMs = modeCrossfade) => {
+      const frameId = on ? id : STAND_OFF.frame;
+      const src = standFrameSrc(frameId);
+      const wait = fadeMs == null ? STAND_FADE_MS : fadeMs;
+      busy = true;
+      try {
+        await loadFrame(backEl, src);
+        if (wait === 0) {
+          frontEl.classList.remove("is-front");
+          frontEl.classList.add("is-back");
+          backEl.classList.remove("is-back");
+          backEl.classList.add("is-front");
+          const tmp = frontEl;
+          frontEl = backEl;
+          backEl = tmp;
+        } else {
+          backEl.classList.add("is-fading-in");
+          await new Promise((r) => setTimeout(r, wait));
+          frontEl.classList.remove("is-front");
+          frontEl.classList.add("is-back");
+          backEl.classList.remove("is-back", "is-fading-in");
+          backEl.classList.add("is-front");
+          const tmp = frontEl;
+          frontEl = backEl;
+          backEl = tmp;
+        }
+        frontEl.alt = on
+          ? `PWRD. LED charger stand lit ${STAND_COLORS[id]?.name?.toLowerCase() || id}`
+          : "PWRD. LED charger stand with light off";
+        applyGlow(id, on);
+        syncButtons();
+        announce(id, on);
+      } catch (err) {
+        console.warn("Stand frame failed to load:", err);
+      } finally {
+        busy = false;
+        if (queued) {
+          const next = queued;
+          queued = null;
+          next();
+        }
+      }
+    };
+
+    const requestShow = (id, on, fadeMs) => {
+      const run = () => showFrame(id, on, fadeMs);
+      if (busy) queued = run;
+      else run();
+    };
+
+    const stopMode = () => {
+      if (modeTimer != null) {
+        window.clearTimeout(modeTimer);
+        modeTimer = null;
+      }
+      activeMode = null;
+      modeCrossfade = STAND_FADE_MS;
+      root.classList.remove("is-mode-fade", "is-mode-smooth");
+      syncButtons();
+    };
+
+    const scheduleModeStep = () => {
+      if (!activeMode || !STAND_MODES[activeMode]) return;
+      const { dwell, crossfade } = STAND_MODES[activeMode];
+      modeCrossfade = crossfade;
+      modeTimer = window.setTimeout(() => {
+        modeTimer = null;
+        if (!activeMode) return;
+        const idx = STAND_COLOR_ORDER.indexOf(current);
+        const next = STAND_COLOR_ORDER[(idx < 0 ? 0 : idx + 1) % STAND_COLOR_ORDER.length];
+        current = next;
+        powered = true;
+        const step = async () => {
+          await showFrame(next, true, crossfade);
+          if (activeMode) scheduleModeStep();
+        };
+        if (busy) queued = step;
+        else step();
+      }, dwell);
+    };
+
+    const startMode = (modeId) => {
+      if (!STAND_MODES[modeId]) return;
+      if (activeMode === modeId) {
+        stopMode();
+        announce(current, powered);
+        return;
+      }
+      stopMode();
+      activeMode = modeId;
+      powered = true;
+      modeCrossfade = STAND_MODES[modeId].crossfade;
+      syncButtons();
+      requestShow(current, true, modeCrossfade);
+      scheduleModeStep();
+      live.textContent = `Stand light: ${modeId} mode`;
+    };
+
+    const setColor = (id) => {
+      if (!STAND_COLORS[id]) return;
+      stopMode();
+      current = id;
+      powered = true;
+      requestShow(id, true, STAND_FADE_MS);
+    };
+
+    const setPower = (on) => {
+      stopMode();
+      powered = on;
+      requestShow(current, on, STAND_FADE_MS);
+    };
+
+    colorGroup.addEventListener("click", (e) => {
+      const btn = e.target.closest("button.rbtn");
+      if (!btn || btn.disabled || btn.getAttribute("aria-disabled") === "true") return;
+      pressBtn(btn);
+      if (btn.dataset.standColor) setColor(btn.dataset.standColor);
+      else if (btn.dataset.standPower === "on") setPower(true);
+      else if (btn.dataset.standPower === "off") setPower(false);
+      else if (btn.dataset.standMode) startMode(btn.dataset.standMode);
+    });
+
+    // Pointer tilt for a light 2.5D feel (mouse / trackpad only).
+    if (canHover && !reduceMotion) {
+      remote.addEventListener("pointermove", (e) => {
+        const r = remote.getBoundingClientRect();
+        const x = ((e.clientX - r.left) / r.width) * 2 - 1;
+        const y = ((e.clientY - r.top) / r.height) * 2 - 1;
+        face.style.transform = `rotateX(${(-y * 6).toFixed(2)}deg) rotateY(${(x * 6).toFixed(2)}deg)`;
+      });
+      remote.addEventListener("pointerleave", () => {
+        face.style.transform = "";
+      });
+    }
+
+    if (!frontEl.getAttribute("src")?.includes("stand-colors/")) {
+      frontEl.src = standFrameSrc(STAND_DEFAULT);
+    }
+    applyGlow(STAND_DEFAULT, true);
+    syncButtons();
+    announce(STAND_DEFAULT, true);
+
+    let preloaded = false;
+    const preload = () => {
+      if (preloaded) return;
+      preloaded = true;
+      [...Object.keys(STAND_COLORS), STAND_OFF.frame].forEach((id) => {
+        if (id === STAND_DEFAULT) return;
+        const img = new Image();
+        img.decoding = "async";
+        img.src = standFrameSrc(id);
+      });
+    };
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            preload();
+            io.disconnect();
+          }
+        },
+        { rootMargin: "200px" }
+      );
+      io.observe(root);
+    } else {
+      preload();
+    }
+  }
+
+  document.querySelectorAll("[data-stand-demo]").forEach(initStandDemo);
+
   setup();
 })();
