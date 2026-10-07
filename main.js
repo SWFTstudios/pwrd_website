@@ -939,15 +939,15 @@
 
     front.classList.add("stand-frame", "is-front");
     front.alt = front.alt || "PWRD. LED charger stand";
-    front.width = 501;
-    front.height = 720;
+    front.width = 374;
+    front.height = 696;
     front.decoding = "async";
 
     const back = document.createElement("img");
     back.className = "stand-frame is-back";
     back.alt = "";
-    back.width = 501;
-    back.height = 720;
+    back.width = 374;
+    back.height = 696;
     back.decoding = "async";
     back.setAttribute("aria-hidden", "true");
     stage.insertBefore(back, front);
