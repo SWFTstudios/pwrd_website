@@ -130,6 +130,19 @@ h1 span { display: block; }
   cursor: grab;
 }
 .stage:active { cursor: grabbing; }
+/* Phones: the hero follows device tilt, so touches scroll the page as usual. */
+@media (hover: none) and (pointer: coarse) {
+  .stage { touch-action: auto; cursor: auto; }
+  .stage:active { cursor: auto; }
+}
+.tilt-permission {
+  position: absolute; left: 50%; bottom: 6%; translate: -50% 0; z-index: 3;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 16px; border-radius: 999px; font-size: 13px;
+  background: rgba(13, 11, 16, .72); border: 1px solid rgba(255, 255, 255, .2);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.tilt-permission svg { width: 18px; height: 18px; }
 .tilt {
   position: relative; width: min(100%, calc(min(78vh, 760px) * 0.735)); height: auto; aspect-ratio: 832 / 1132;
   transform-style: preserve-3d; will-change: transform;
