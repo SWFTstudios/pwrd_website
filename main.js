@@ -161,17 +161,42 @@
 
   // ---------- Pointer / orientation input ----------
   const input = { x: 0, y: 0, active: false, last: 0 };
+  let dragging = false;
+  const stage = document.getElementById("stage");
+
   const setInput = (x, y) => {
     input.x = Math.max(-1, Math.min(1, x));
     input.y = Math.max(-1, Math.min(1, y));
     input.active = true;
     input.last = performance.now();
   };
+
+  // Map pointer to look relative to the stage center (not the viewport),
+  // so hovering the headphones actually covers the full -1..1 range.
+  const lookFromStage = (clientX, clientY) => {
+    if (!stage) return null;
+    const r = stage.getBoundingClientRect();
+    if (r.width < 1 || r.height < 1) return null;
+    return {
+      x: ((clientX - r.left) / r.width) * 2 - 1,
+      y: ((clientY - r.top) / r.height) * 2 - 1,
+    };
+  };
+
+  const pointerOverStage = (clientX, clientY) => {
+    if (!stage) return false;
+    const r = stage.getBoundingClientRect();
+    return clientX >= r.left && clientX <= r.right && clientY >= r.top && clientY <= r.bottom;
+  };
+
   window.addEventListener("pointermove", (e) => {
-    setInput((e.clientX / innerWidth) * 2 - 1, (e.clientY / innerHeight) * 2 - 1);
+    if (dragging || reduceMotion) return;
+    if (!pointerOverStage(e.clientX, e.clientY)) return;
+    const look = lookFromStage(e.clientX, e.clientY);
+    if (look) setInput(look.x, look.y);
   });
   window.addEventListener("deviceorientation", (e) => {
-    if (e.gamma == null) return;
+    if (e.gamma == null || reduceMotion) return;
     setInput(e.gamma / 30, (e.beta - 45) / 30);
   });
 
@@ -202,7 +227,7 @@
   const initialColor =
     COLORWAYS[paramColor] ? paramColor
     : COLORWAYS[document.body.dataset.colorway] ? document.body.dataset.colorway
-    : "purple";
+    : "pink";
   document.body.dataset.colorway = initialColor;
 
   const tilt = document.getElementById("tilt");
@@ -687,18 +712,36 @@
     btn.addEventListener("click", () => setColorway(btn.dataset.colorway));
   });
 
-  // Drag on the stage to "turn" the headphones on touch screens.
-  const stage = document.getElementById("stage");
+  // Drag on the stage to "turn" the headphones (touch + mouse).
   if (stage) {
     stage.addEventListener("pointerdown", (e) => {
+      if (reduceMotion) return;
+      if (e.button != null && e.button !== 0) return;
+      dragging = true;
       const start = { x: e.clientX, y: e.clientY };
-      const move = (ev) => setInput((ev.clientX - start.x) / 160, (ev.clientY - start.y) / 160);
-      const up = () => {
-        window.removeEventListener("pointermove", move);
-        window.removeEventListener("pointerup", up);
+      const base = { x: input.x, y: input.y };
+      try {
+        stage.setPointerCapture(e.pointerId);
+      } catch (_) {
+        /* capture unsupported — drag still works via stage events */
+      }
+      const move = (ev) => {
+        setInput(base.x + (ev.clientX - start.x) / 160, base.y + (ev.clientY - start.y) / 160);
       };
-      window.addEventListener("pointermove", move);
-      window.addEventListener("pointerup", up);
+      const up = (ev) => {
+        dragging = false;
+        try {
+          stage.releasePointerCapture(ev.pointerId);
+        } catch (_) {
+          /* already released */
+        }
+        stage.removeEventListener("pointermove", move);
+        stage.removeEventListener("pointerup", up);
+        stage.removeEventListener("pointercancel", up);
+      };
+      stage.addEventListener("pointermove", move);
+      stage.addEventListener("pointerup", up);
+      stage.addEventListener("pointercancel", up);
     });
   }
 
