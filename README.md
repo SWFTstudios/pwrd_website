@@ -2,11 +2,13 @@
 
 Website for **PWRD.** products, all sold on Walmart.com: the **Liquid Glitter Headphones** (Pink Liquid Glitter and Purple Liquid Glitter) and the **3 in 1 LED Wireless Charger with Headphone Stand**.
 
-Plain HTML/CSS/JS, so there is no build step. Pages: `index.html`, `shop.html` (all products), `support.html` (FAQ), product pages `pink.html`, `purple.html`, `product.html` (both headphone colorways) and `led-charger-stand.html`, plus headphone pages `colorways.html`, `features.html`, `specs.html` (linked from the footer). The top nav is just Shop and Support, plus Instagram and TikTok. Open them through any static server:
+Plain HTML/CSS/JS, so there is no build step. `worker.js` only answers `/api/*` (coming-soon signups); everything else is served as static assets. Pages: `index.html`, `shop.html` (all products), `support.html` (FAQ), product pages `pink.html`, `purple.html`, `product.html` (both headphone colorways) and `led-charger-stand.html`, plus headphone pages `colorways.html`, `features.html`, `specs.html` (linked from the footer). `coming-soon.html` is a teaser for an unannounced product (not linked from the nav yet). The top nav is just Shop and Support, plus Instagram and TikTok. Open them through any static server:
 
 ```bash
 python3 -m http.server 5178
 ```
+
+To try the signup form too, run the Worker locally with `npx wrangler dev` (needs `WAITLIST_KEY=...` in a `.dev.vars` file for the export).
 
 ## How the "3D" hero works
 
@@ -59,3 +61,22 @@ python3 scripts/remove-white-bg.py path/to/photo.avif --out assets/img/gallery/p
 ```
 
 Only white connected to the edges (plus large enclosed gaps, like under the headband) is removed, so white details on the product stay. Needs `pillow`, `numpy` and `scipy`.
+
+## Coming-soon page
+
+`coming-soon.html` + `coming-soon.css` + `coming-soon.js`. The whole page sits behind frosted glass: only the product's light shows through, and tapping the glass squishes it and changes its color. Keep product names and descriptions out of this page, its assets and this repo (the repo is public) until launch.
+
+- `assets/img/soon/glow-<color>.webp` are already heavily blurred, so nothing sharp is ever served; the glass blurs them again.
+- Launch-day files live in `_launch/`, which is ignored by git and by deploys. Don't commit them before launch.
+
+### Signups
+
+The form posts to `/api/notify`, which stores the email, the page it came from (`source`) and the date in the D1 database `pwrd-signups` (Wrangler creates it on the first `npm run deploy`). Signing up twice from the same page keeps one row.
+
+To download the list as an Excel file, set a password once:
+
+```bash
+npx wrangler secret put WAITLIST_KEY
+```
+
+then open `https://pwrd-website.elombe.workers.dev/api/notify/export` and sign in with any username and that password. The download is `pwrd-signups-<date>.xlsx`.

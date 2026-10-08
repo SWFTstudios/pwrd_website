@@ -313,12 +313,19 @@
   }
 
   whenReady(() => {
+    // Hidden eyebrows are clipped to nothing, which Chrome counts as never intersecting,
+    // so they're watched through their parent instead.
+    const watched = new Map();
+    targets.forEach((el) => {
+      const proxy = el.matches(".eyebrow") ? el.parentElement : el;
+      watched.set(proxy, [...(watched.get(proxy) || []), el]);
+    });
     const observe = (margin) => {
       const io = new IntersectionObserver((entries) => {
         entries.forEach((e) => {
           if (!e.isIntersecting) return;
           io.unobserve(e.target);
-          show(e.target);
+          watched.get(e.target).forEach(show);
         });
       }, { rootMargin: margin, threshold: 0.08 });
       return io;
@@ -326,7 +333,7 @@
     // Content waits until it's a little way up the screen; the footer sits at the very
     // bottom of the page, so it reveals as soon as it's visible.
     const content = observe("0px 0px -6% 0px"), edge = observe("0px");
-    targets.forEach((el) => (el.closest(".footer") ? edge : content).observe(el));
+    watched.forEach((_, el) => (el.closest(".footer") ? edge : content).observe(el));
   });
 
   // Colorway swaps (product page) replace heading text: give the new name a quick rise.
