@@ -1,0 +1,188 @@
+/* Coming-soon page (coming-soon.html). Loaded after styles.css.
+   The whole page sits behind frosted glass: only the light of the product shows through. */
+
+/* Animatable glow color, following the light behind the glass. */
+@property --glow { syntax: "<color>"; inherits: true; initial-value: #fff1d2; }
+
+.page-soon {
+  --glow: #fff1d2;
+  --tint: var(--glow);
+  display: flex; flex-direction: column; min-height: 100vh; min-height: 100svh;
+  transition: --glow .5s ease;
+}
+.page-soon[data-mode="chase"] { animation: soon-chase-glow 6s linear infinite; }
+@keyframes soon-chase-glow {
+  0%, 100% { --glow: #ff3b55; }
+  17% { --glow: #ffb21f; }
+  33% { --glow: #2fe07a; }
+  50% { --glow: #2bc4ff; }
+  67% { --glow: #4b5bff; }
+  83% { --glow: #d53cff; }
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ---------- Behind the glass ---------- */
+.soon-scene { position: fixed; inset: 0; z-index: -2; overflow: hidden; pointer-events: none; background: var(--bg); }
+.soon-backdrop {
+  position: absolute; inset: -8%; width: 116%; height: 116%; max-width: none;
+  object-fit: cover; object-position: 50% 82%;
+  filter: blur(14px) saturate(1.35) brightness(.65);
+}
+.soon-scene::after {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(50vmax 40vmax at 72% 52%, color-mix(in srgb, var(--glow) 30%, transparent), transparent 70%);
+}
+
+.soon-stage {
+  position: absolute; z-index: 1;
+  right: 8vw; top: 52%;
+  height: min(78vh, 720px); aspect-ratio: 399 / 558;
+  translate: 0 -50%;
+}
+.soon-glow {
+  position: absolute; inset: 0 -40%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--glow) 70%, transparent), transparent);
+  filter: blur(20px);
+  animation: soon-breathe 4.5s ease-in-out infinite;
+}
+@keyframes soon-breathe { 50% { opacity: .6; transform: scale(.92); } }
+.soon-squish { position: absolute; inset: 0; display: block; transform-origin: 50% 88%; isolation: isolate; }
+.soon-squish > * { position: absolute; inset: 0; width: 100%; height: 100%; }
+.soon-frame { opacity: 0; z-index: 0; }
+.soon-frame.is-prev { opacity: 1; z-index: 1; }
+.soon-frame.is-on { opacity: 1; z-index: 2; transition: opacity .35s ease; }
+.soon-frame.is-entering { opacity: 0; }
+.soon-chase {
+  z-index: 3; opacity: 0;
+  -webkit-mask: url("assets/img/soon/glow-white.webp") center / 100% 100% no-repeat;
+  mask: url("assets/img/soon/glow-white.webp") center / 100% 100% no-repeat;
+  background: linear-gradient(180deg,
+    #ff3b55 0%, #ffb21f 8.33%, #fff04a 16.66%, #2fe07a 25%, #2bc4ff 33.33%, #6a5bff 41.66%,
+    #ff3b55 50%, #ffb21f 58.33%, #fff04a 66.66%, #2fe07a 75%, #2bc4ff 83.33%, #6a5bff 91.66%, #ff3b55 100%) 0 0 / 100% 200%;
+  mix-blend-mode: multiply;
+  transition: opacity .4s ease;
+  animation: soon-chase 3.2s linear infinite;
+}
+@keyframes soon-chase { to { background-position: 0 100%; } }
+[data-mode="chase"] .soon-chase { opacity: 1; }
+
+/* ---------- The glass ---------- */
+.soon-glass {
+  position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    linear-gradient(155deg, rgba(255, 255, 255, .14), rgba(255, 255, 255, .03) 40%, rgba(255, 255, 255, .08)),
+    rgba(13, 11, 16, .34);
+  box-shadow: inset 0 0 120px -30px color-mix(in srgb, var(--glow) 45%, transparent);
+  backdrop-filter: blur(28px) saturate(1.45);
+  -webkit-backdrop-filter: blur(28px) saturate(1.45);
+}
+.soon-glass::before {
+  content: ""; position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: .14; mix-blend-mode: overlay;
+}
+.soon-glass::after {
+  content: ""; position: absolute; top: -20%; bottom: -20%; left: -60%; width: 35%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .1), transparent);
+  transform: skewX(-18deg);
+  animation: soon-sheen 9s ease-in-out infinite;
+}
+@keyframes soon-sheen { 0%, 60% { left: -60%; } 100% { left: 130%; } }
+
+/* A tap leaves a ring of light on the glass. */
+.soon-ripple {
+  position: fixed; z-index: 1; width: 220px; height: 220px; margin: -110px 0 0 -110px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, .55);
+  box-shadow: 0 0 40px color-mix(in srgb, var(--glow) 70%, transparent), inset 0 0 40px color-mix(in srgb, var(--glow) 40%, transparent);
+  pointer-events: none;
+}
+
+/* ---------- On the glass ---------- */
+.soon-main {
+  flex: 1;
+  display: flex; align-items: center;
+  padding: 120px var(--gutter) 48px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.soon-copy { max-width: 560px; cursor: auto; }
+.soon-title { font-size: clamp(56px, 9vw, 152px); line-height: .92; letter-spacing: -.02em; }
+.soon-word {
+  color: var(--glow);
+  filter: drop-shadow(0 0 28px color-mix(in srgb, var(--glow) 55%, transparent));
+}
+.soon-copy .lede { margin: 24px 0 28px; }
+
+.soon-form { position: relative; max-width: 520px; }
+.soon-field {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .1);
+  border: 1px solid rgba(255, 255, 255, .24);
+  transition: border-color .2s, box-shadow .2s;
+}
+.soon-field:focus-within { border-color: var(--lime); box-shadow: 0 0 0 4px rgba(216, 243, 106, .15); }
+.soon-field input {
+  flex: 1; min-width: 0;
+  padding: 12px 8px 12px 18px;
+  border: 0; outline: 0; background: transparent;
+  color: var(--ink); font: inherit; font-size: 16px;
+}
+.soon-field input::placeholder { color: #b3adba; }
+.soon-field .cta { flex: none; padding: 14px 24px; box-shadow: none; }
+.soon-field .cta:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.soon-field .cta[disabled] { opacity: .7; cursor: progress; transform: none; }
+.soon-note { margin: 14px 0 0 18px; font-size: 14px; color: #bdb7c4; }
+.soon-form.is-error .soon-field { border-color: #ff8a9a; }
+.soon-form.is-error .soon-note { color: #ffb3bf; }
+.soon-form.is-done .soon-field { display: none; }
+.soon-form.is-done .soon-note {
+  margin: 0; padding: 18px 22px; border-radius: 18px;
+  background: rgba(216, 243, 106, .12); border: 1px solid rgba(216, 243, 106, .45);
+  color: var(--ink); font-size: 16px;
+}
+.soon-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+.soon-tap {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-top: 28px; padding: 8px 14px 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .16);
+  background: rgba(255, 255, 255, .06);
+  color: #d9d4de; font-size: 13px;
+  transition: background .2s, border-color .2s;
+}
+.soon-tap:hover { background: rgba(255, 255, 255, .12); border-color: var(--glow); }
+.soon-tap:focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; }
+.soon-tap svg { width: 18px; height: 18px; }
+
+.soon-footer { border-top-color: rgba(255, 255, 255, .08); background: rgba(13, 11, 16, .55); color: #bdb7c4; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 960px) {
+  .soon-main { align-items: flex-start; justify-content: center; padding-top: 112px; text-align: center; }
+  .soon-copy { display: flex; flex-direction: column; align-items: center; }
+  .soon-copy .lede { margin-inline: auto; }
+  .soon-form { width: 100%; }
+  .soon-note { margin-left: 0; }
+  .soon-stage { right: auto; left: 50%; top: auto; bottom: -4vh; height: min(48vh, 440px); translate: -50% 0; }
+  .soon-scene::after { background: radial-gradient(70vmax 40vmax at 50% 90%, color-mix(in srgb, var(--glow) 32%, transparent), transparent 70%); }
+}
+@media (max-width: 560px) {
+  .soon-title { font-size: clamp(52px, 17vw, 80px); }
+  .soon-field { flex-direction: column; align-items: stretch; border-radius: 24px; padding: 8px; }
+  .soon-field input { padding: 12px 14px; text-align: center; }
+  .soon-field .cta { justify-content: center; }
+  .soon-copy .lede { font-size: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-soon[data-mode="chase"], .soon-glow, .soon-chase, .soon-glass::after { animation: none; }
+  .soon-frame.is-on { transition: none; }
+}

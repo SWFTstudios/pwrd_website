@@ -1,9 +1,19 @@
 {
   "name": "pwrd-website",
   "compatibility_date": "2026-10-01",
-  // Plain static site: serve the repo root as assets.
+  // Static site served as assets; worker.js only answers /api/* (coming-soon signups).
+  "main": "worker.js",
   "assets": {
-    "directory": "."
+    "directory": ".",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"]
   },
+  // Signup list. Wrangler creates the database on the first deploy and fills in its id.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "pwrd-signups"
+    }
+  ],
   "previews": {}
 }

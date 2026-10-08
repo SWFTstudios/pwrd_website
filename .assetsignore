@@ -10,3 +10,6 @@ node_modules
 scripts
 .claude
 .DS_Store
+worker.js
+.dev.vars
+_launch
