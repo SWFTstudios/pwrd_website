@@ -2,7 +2,7 @@
 
 Website for **PWRD.** products, all sold on Walmart.com: the **Liquid Glitter Headphones** (Pink Liquid Glitter and Purple Liquid Glitter) and the **3 in 1 LED Wireless Charger with Headphone Stand**.
 
-Plain HTML/CSS/JS, so there is no build step. `worker.js` only answers `/api/*` (coming-soon signups); everything else is served as static assets. Pages: `index.html`, `shop.html` (all products), `support.html` (FAQ), product pages `pink.html`, `purple.html`, `product.html` (both headphone colorways) and `led-charger-stand.html`, plus headphone pages `colorways.html`, `features.html`, `specs.html` (linked from the footer). `coming-soon.html` is a teaser for an unannounced product (not linked from the nav yet). The top nav is just Shop and Support, plus Instagram and TikTok. Open them through any static server:
+Plain HTML/CSS/JS, so there is no build step. `worker.js` answers `/api/*` (signups), `/unsubscribe` and `/media/*` (product media from R2); everything else is served as static assets. Pages: `index.html`, `shop.html` (all products), `support.html` (FAQ), product pages `pink.html`, `purple.html`, `product.html` (both headphone colorways) and `led-charger-stand.html`, plus headphone pages `colorways.html`, `features.html`, `specs.html` (linked from the footer). `coming-soon.html` is a teaser for an unannounced product (not linked from the nav yet). The top nav is just Shop and Support, plus Instagram and TikTok. Open them through any static server:
 
 ```bash
 python3 -m http.server 5178
@@ -71,12 +71,19 @@ Only white connected to the edges (plus large enclosed gaps, like under the head
 
 ### Signups
 
-The form posts to `/api/notify`, which stores the email, the page it came from (`source`) and the date in the D1 database `pwrd-signups` (Wrangler creates it on the first `npm run deploy`). Signing up twice from the same page keeps one row.
+The forms post to `/api/notify`, which stores the email, the page it came from (`source`) and the date in the D1 database `pwrd-signups` (Wrangler creates it on the first `npm run deploy`). Signing up twice from the same page keeps one row. Sources so far: `coming-soon` (teaser page) and `unicorn-walmart` (the "Notify me when it's at Walmart" forms on `squishy-led-unicorn.html`).
 
-To download the list as an Excel file, set a password once:
+Set the export password once:
 
 ```bash
 npx wrangler secret put WAITLIST_KEY
 ```
 
-then open `https://pwrd-website.elombe.workers.dev/api/notify/export` and sign in with any username and that password. The download is `pwrd-signups-<date>.xlsx`.
+The list is always current; there is nothing to sync by hand:
+
+- **Excel:** open `https://staypwrd.com/api/notify/export` and sign in with any username and that password. Add `?source=unicorn-walmart` for just the unicorn list.
+- **Live Google Sheet:** in cell A1 put `=IMPORTDATA("https://staypwrd.com/api/notify/export.csv?source=unicorn-walmart&key=YOUR_WAITLIST_KEY")`. Google refreshes it about every hour. Anyone who can open that sheet can see the key, so keep the sheet private.
+
+Columns: Email, Signed up from, Signed up (UTC), Status (Subscribed / Unsubscribed), Unsubscribed (UTC), Unsubscribe link.
+
+**Unsubscribes.** Every signup has its own private link (`/unsubscribe?t=…`, in the last column). When you send the launch email, mail-merge that link into each message (e.g. "Don't want these emails? Unsubscribe: {Unsubscribe link}") and only send to rows whose Status is **Subscribed**. Opening the link shows a confirm button, so email link scanners can't unsubscribe people by accident; the click marks the row Unsubscribed. If your email tool supports it, also set the `List-Unsubscribe` header to the same link with `List-Unsubscribe-Post: List-Unsubscribe=One-Click`, which turns on the built-in Unsubscribe button in Gmail and Apple Mail. Someone who signs up again after unsubscribing is switched back to Subscribed.

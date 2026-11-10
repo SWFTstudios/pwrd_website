@@ -59,7 +59,7 @@ def ensure_shop_card(dest: Path) -> Path:
         "  swift scripts/lift-subject.swift ~/Downloads/<folder>/PWRD0004R_02.jpg /tmp/box.png\n"
         "then convert /tmp/box.png to WebP at that path, or download the current one:\n"
         "  ./node_modules/.bin/wrangler r2 object get "
-        "pwrd-media/products/squishy-led-unicorn/web/shop-card-v2.webp "
+        "pwrd-media/products/squishy-led-unicorn/web/shop-card-v3.webp "
         f"--file {dest.relative_to(ROOT)} --remote"
     )
 
@@ -106,8 +106,13 @@ def main() -> int:
     for asset in product["assets"]:
         source = asset["source"]
         key = asset["key"]
-        if source.startswith("derived:"):
+        if key == product["shopCard"]:
             file = shop_card
+        elif source.startswith("derived:"):
+            # Other derived files (e.g. the glow-*.webp color frames from
+            # scripts/build-unicorn-frames.js) are uploaded by hand; leave them as they are.
+            print(f"  - skipping derived {key}")
+            continue
         else:
             file = find_source(source)
             if not file:

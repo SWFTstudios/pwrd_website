@@ -6,7 +6,7 @@
       "id": "squishy-led-unicorn",
       "sku": "PWRD0004R",
       "name": "Squishy LED Unicorn Blind box",
-      "shopCard": "products/squishy-led-unicorn/web/shop-card-v2.webp",
+      "shopCard": "products/squishy-led-unicorn/web/shop-card-v3.webp",
       "assets": [
         {
           "id": "packaging-box-features",
@@ -443,10 +443,45 @@
         },
         {
           "id": "web-shop-card",
-          "key": "products/squishy-led-unicorn/web/shop-card-v2.webp",
+          "key": "products/squishy-led-unicorn/web/shop-card-v3.webp",
           "role": "web",
           "alt": "PWRD. Squishy LED Unicorn Blind Box packaging",
           "source": "derived:box-front-vision-cutout.webp"
+        },
+        {
+          "id": "web-glow-white",
+          "key": "products/squishy-led-unicorn/web/glow-white.webp",
+          "role": "web",
+          "alt": "Squishy LED Unicorn glowing warm white, transparent cutout",
+          "source": "derived:PWRD0004R_11.jpg (scripts/build-unicorn-frames.js)"
+        },
+        {
+          "id": "web-glow-red",
+          "key": "products/squishy-led-unicorn/web/glow-red.webp",
+          "role": "web",
+          "alt": "Squishy LED Unicorn glowing red, transparent cutout",
+          "source": "derived:PWRD0004R_12.jpg (scripts/build-unicorn-frames.js)"
+        },
+        {
+          "id": "web-glow-green",
+          "key": "products/squishy-led-unicorn/web/glow-green.webp",
+          "role": "web",
+          "alt": "Squishy LED Unicorn glowing green, transparent cutout",
+          "source": "derived:PWRD0004R_13.jpg (scripts/build-unicorn-frames.js)"
+        },
+        {
+          "id": "web-glow-blue",
+          "key": "products/squishy-led-unicorn/web/glow-blue.webp",
+          "role": "web",
+          "alt": "Squishy LED Unicorn glowing blue, transparent cutout",
+          "source": "derived:PWRD0004R_14.jpg (scripts/build-unicorn-frames.js)"
+        },
+        {
+          "id": "web-glow-purple",
+          "key": "products/squishy-led-unicorn/web/glow-purple.webp",
+          "role": "web",
+          "alt": "Squishy LED Unicorn glowing purple, transparent cutout",
+          "source": "derived:PWRD0004R_15.jpg (scripts/build-unicorn-frames.js)"
         }
       ]
     }

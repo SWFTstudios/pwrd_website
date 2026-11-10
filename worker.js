@@ -1,23 +1,33 @@
-// PWRD. site Worker. Static pages are served from assets; this handles /api/* and /media/*.
+// PWRD. site Worker. Static pages are served from assets; this handles /api/*, /unsubscribe and /media/*.
 //
-//   POST /api/notify          Coming-soon signup: { email, source, company (honeypot) }
-//   GET  /api/notify/export   Download every signup as an Excel file (.xlsx).
-//                             Password protected with HTTP Basic auth: any username,
-//                             password = the WAITLIST_KEY secret.
-//   GET  /media/<key>         Product media from the MEDIA R2 bucket (pwrd-media).
+//   POST /api/notify              Signup: { email, source, company (honeypot) }.
+//                                 source is the page/launch, e.g. "coming-soon" or "unicorn-walmart".
+//   GET  /api/notify/export       Every signup as an Excel file (.xlsx), always current.
+//   GET  /api/notify/export.csv   The same list as CSV, for a live Google Sheet:
+//                                 =IMPORTDATA("https://staypwrd.com/api/notify/export.csv?key=WAITLIST_KEY")
+//                                 Both exports take ?source=unicorn-walmart to show one list.
+//                                 Auth: HTTP Basic (any username, password = WAITLIST_KEY) or ?key=.
+//   GET  /unsubscribe?t=<token>   Confirm page; the button POSTs back to unsubscribe.
+//   POST /unsubscribe?t=<token>   Unsubscribe (also used by one-click List-Unsubscribe in email apps).
+//   GET  /media/<key>             Product media from the MEDIA R2 bucket (pwrd-media).
 //
-// Signups live in the D1 database bound as DB. The table is created on first use.
+// Signups live in the D1 database bound as DB. The table is created (and upgraded) on first use.
+// Each signup gets a private token; its unsubscribe link is in the export, ready for a mail merge.
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const TOKEN_RE = /^[a-f0-9]{32}$/;
 
 export default {
   async fetch(request, env) {
-    const { pathname } = new URL(request.url);
+    const url = new URL(request.url);
+    const { pathname } = url;
     if (pathname === "/api/notify") {
       if (request.method !== "POST") return json({ ok: false, error: "Method not allowed" }, 405);
       return signup(request, env);
     }
-    if (pathname === "/api/notify/export") return exportSignups(request, env);
+    if (pathname === "/api/notify/export") return exportSignups(request, env, url, "xlsx");
+    if (pathname === "/api/notify/export.csv") return exportSignups(request, env, url, "csv");
+    if (pathname === "/unsubscribe" || pathname === "/api/unsubscribe") return unsubscribe(request, env, url);
     if (pathname.startsWith("/api/")) return json({ ok: false, error: "Not found" }, 404);
     if (pathname.startsWith("/media/")) return serveMedia(request, env, pathname);
     return env.ASSETS.fetch(request);
@@ -51,7 +61,13 @@ function json(body, status = 200) {
   });
 }
 
+function newToken() {
+  return crypto.randomUUID().replace(/-/g, "");
+}
+
+let tableReady = false;
 async function ensureTable(env) {
+  if (tableReady) return;
   await env.DB.prepare(
     `CREATE TABLE IF NOT EXISTS waitlist (
       email TEXT NOT NULL,
@@ -60,6 +76,15 @@ async function ensureTable(env) {
       PRIMARY KEY (email, source)
     )`
   ).run();
+  // Upgrade older tables: a private unsubscribe token per signup and when they opted out.
+  const { results } = await env.DB.prepare("PRAGMA table_info(waitlist)").all();
+  const cols = new Set(results.map((c) => c.name));
+  if (!cols.has("token")) await env.DB.prepare("ALTER TABLE waitlist ADD COLUMN token TEXT").run();
+  if (!cols.has("unsubscribed_at")) await env.DB.prepare("ALTER TABLE waitlist ADD COLUMN unsubscribed_at TEXT").run();
+  await env.DB.prepare("CREATE UNIQUE INDEX IF NOT EXISTS waitlist_token ON waitlist (token)").run();
+  // Signups from before tokens existed get one now.
+  await env.DB.prepare("UPDATE waitlist SET token = lower(hex(randomblob(16))) WHERE token IS NULL").run();
+  tableReady = true;
 }
 
 async function signup(request, env) {
@@ -84,19 +109,23 @@ async function signup(request, env) {
   const source = String(data.source || "coming-soon").replace(/[^\w-]/g, "").slice(0, 60) || "coming-soon";
 
   await ensureTable(env);
-  // Signing up twice from the same page keeps the first date.
+  // Signing up twice from the same page keeps the first date; signing up again after
+  // unsubscribing turns notifications back on.
   await env.DB.prepare(
-    "INSERT INTO waitlist (email, source, created_at) VALUES (?1, ?2, ?3) ON CONFLICT (email, source) DO NOTHING"
+    `INSERT INTO waitlist (email, source, created_at, token) VALUES (?1, ?2, ?3, ?4)
+     ON CONFLICT (email, source) DO UPDATE SET unsubscribed_at = NULL`
   )
-    .bind(email, source, new Date().toISOString())
+    .bind(email, source, new Date().toISOString(), newToken())
     .run();
 
   return json({ ok: true });
 }
 
-async function exportSignups(request, env) {
+async function exportSignups(request, env, url, format) {
   const auth = request.headers.get("authorization") || "";
-  const password = auth.startsWith("Basic ") ? atob(auth.slice(6)).split(":").slice(1).join(":") : "";
+  const password = auth.startsWith("Basic ")
+    ? atob(auth.slice(6)).split(":").slice(1).join(":")
+    : url.searchParams.get("key") || "";
   if (!env.WAITLIST_KEY || !(await safeEqual(password, env.WAITLIST_KEY))) {
     return new Response("Sign in to download the signup list.", {
       status: 401,
@@ -105,21 +134,119 @@ async function exportSignups(request, env) {
   }
 
   await ensureTable(env);
-  const { results } = await env.DB.prepare(
-    "SELECT email, source, created_at FROM waitlist ORDER BY created_at"
-  ).all();
+  const source = (url.searchParams.get("source") || "").replace(/[^\w-]/g, "");
+  const stmt = source
+    ? env.DB.prepare("SELECT * FROM waitlist WHERE source = ?1 ORDER BY created_at").bind(source)
+    : env.DB.prepare("SELECT * FROM waitlist ORDER BY created_at");
+  const { results } = await stmt.all();
 
+  const when = (iso) => (iso ? iso.replace("T", " ").slice(0, 19) : "");
   const rows = [
-    ["Email", "Signed up from", "Signed up (UTC)"],
-    ...results.map((r) => [r.email, r.source, r.created_at.replace("T", " ").slice(0, 19)]),
+    ["Email", "Signed up from", "Signed up (UTC)", "Status", "Unsubscribed (UTC)", "Unsubscribe link"],
+    ...results.map((r) => [
+      r.email,
+      r.source,
+      when(r.created_at),
+      r.unsubscribed_at ? "Unsubscribed" : "Subscribed",
+      when(r.unsubscribed_at),
+      `${url.origin}/unsubscribe?t=${r.token}`,
+    ]),
   ];
   const date = new Date().toISOString().slice(0, 10);
+  const name = `pwrd-signups${source ? "-" + source : ""}-${date}`;
+  if (format === "csv") {
+    const cell = (v) => (/[",\n\r]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : String(v));
+    // Starting a cell with = + - @ would make spreadsheets run it as a formula.
+    const safe = (v) => (/^[=+\-@]/.test(String(v)) ? "'" + v : v);
+    return new Response(rows.map((r) => r.map((v) => cell(safe(v))).join(",")).join("\r\n") + "\r\n", {
+      headers: {
+        "content-type": "text/csv; charset=utf-8",
+        "content-disposition": `inline; filename="${name}.csv"`,
+        "cache-control": "no-store",
+      },
+    });
+  }
   return new Response(xlsx(rows), {
     headers: {
       "content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "content-disposition": `attachment; filename="pwrd-signups-${date}.xlsx"`,
+      "content-disposition": `attachment; filename="${name}.xlsx"`,
       "cache-control": "no-store",
     },
+  });
+}
+
+// GET shows a confirm button (so email link scanners can't unsubscribe people by opening the link);
+// POST does it. Email apps' one-click "Unsubscribe" (List-Unsubscribe-Post) also POSTs here.
+async function unsubscribe(request, env, url) {
+  const token = (url.searchParams.get("t") || "").toLowerCase();
+  if (request.method !== "GET" && request.method !== "POST") {
+    return new Response("Method not allowed", { status: 405, headers: { allow: "GET, POST" } });
+  }
+  if (!TOKEN_RE.test(token)) {
+    return page("Link not recognized", "<p>This unsubscribe link isn't valid. Please use the link from your most recent PWRD. email.</p>", 404);
+  }
+  await ensureTable(env);
+  const row = await env.DB.prepare("SELECT email, unsubscribed_at FROM waitlist WHERE token = ?1").bind(token).first();
+  if (!row) {
+    return page("Link not recognized", "<p>This unsubscribe link isn't valid. Please use the link from your most recent PWRD. email.</p>", 404);
+  }
+  const shown = escapeHtml(row.email);
+  if (request.method === "POST") {
+    if (!row.unsubscribed_at) {
+      await env.DB.prepare("UPDATE waitlist SET unsubscribed_at = ?1 WHERE token = ?2").bind(new Date().toISOString(), token).run();
+    }
+    return page("You're unsubscribed", `<p><strong>${shown}</strong> won't get any more PWRD. launch emails for this list.</p><p>Changed your mind? Sign up again any time on our site.</p><p><a class="cta" href="/">Back to PWRD.</a></p>`);
+  }
+  if (row.unsubscribed_at) {
+    return page("Already unsubscribed", `<p><strong>${shown}</strong> is already off this list. You won't get any more emails from it.</p><p><a class="cta" href="/">Back to PWRD.</a></p>`);
+  }
+  return page(
+    "Unsubscribe?",
+    `<p>Stop PWRD. launch emails to <strong>${shown}</strong>?</p>
+     <form method="post" action="/unsubscribe?t=${token}"><button class="cta" type="submit">Unsubscribe</button></form>
+     <p class="unsub-small">Did it by mistake? Just close this page and you'll stay on the list.</p>`
+  );
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+}
+
+function page(title, body, status = 200) {
+  const html = `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>${title} | PWRD.</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    .unsub { min-height: 100vh; display: grid; place-items: center; padding: 40px var(--gutter); text-align: center; }
+    .unsub-card { max-width: 520px; }
+    .unsub-card img { display: block; width: 140px; height: auto; margin: 0 auto 36px; }
+    .unsub-card h1 { font-size: clamp(32px, 6vw, 52px); margin-bottom: 20px; }
+    .unsub-card p { color: #d9d4de; font-size: 17px; margin: 0 0 22px; }
+    .unsub-card form { margin: 8px 0 22px; }
+    .unsub-card .cta { padding: 14px 28px; justify-content: center; }
+    .unsub-card .unsub-small { font-size: 14px; color: var(--ink-dim); }
+  </style>
+</head>
+<body>
+  <main class="unsub">
+    <div class="unsub-card">
+      <a href="/"><img src="/assets/img/brand/pwrd-logo-white.svg" alt="PWRD. home" width="216" height="68" /></a>
+      <h1>${title}</h1>
+      ${body}
+    </div>
+  </main>
+</body>
+</html>`;
+  return new Response(html, {
+    status,
+    headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "x-robots-tag": "noindex" },
   });
 }
 

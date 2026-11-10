@@ -1090,3 +1090,125 @@ html.intro:not(.intro-mounted) body::after { content: ""; position: fixed; inset
 .style-note { margin: 20px 0 0; font-size: 13px; color: var(--ink-dim); }
 @media (max-width: 900px) { .style-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 480px) { .style-grid { gap: 12px; } .style-grid figcaption { font-size: 13px; } }
+
+/* Unicorn: "Notify me when it's at Walmart" forms (posted by unicorn.js) */
+.notify-badge {
+  display: inline-flex; align-items: center; gap: 10px; margin: 0 0 14px;
+  font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--lime);
+}
+.notify-badge span {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--lime);
+  box-shadow: 0 0 0 0 rgba(216, 243, 106, .6); animation: notify-pulse 2s ease-out infinite;
+}
+@keyframes notify-pulse { 70% { box-shadow: 0 0 0 10px rgba(216, 243, 106, 0); } 100% { box-shadow: 0 0 0 0 rgba(216, 243, 106, 0); } }
+.notify-form { position: relative; max-width: 500px; }
+.notify-form-center { margin: 0 auto; text-align: left; }
+.notify-field {
+  display: flex; align-items: center; gap: 6px; padding: 6px;
+  border-radius: 999px; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .22);
+  transition: border-color .2s, box-shadow .2s;
+}
+.notify-field:focus-within { border-color: var(--lime); box-shadow: 0 0 0 4px rgba(216, 243, 106, .15); }
+.notify-field input {
+  flex: 1; min-width: 0; padding: 12px 8px 12px 18px;
+  border: 0; outline: 0; background: transparent; color: var(--ink); font: inherit; font-size: 16px;
+}
+.notify-field input::placeholder { color: #b3adba; }
+.notify-field .cta { flex: none; padding: 14px 24px; box-shadow: none; }
+.notify-field .cta:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.notify-field .cta[disabled] { opacity: .7; cursor: progress; transform: none; }
+.notify-note { margin: 12px 0 0 18px; font-size: 14px; color: #bdb7c4; }
+.notify-form.is-error .notify-field { border-color: #ff8a9a; }
+.notify-form.is-error .notify-note { color: #ffb3bf; }
+.notify-form.is-done .notify-field { display: none; }
+.notify-form.is-done .notify-note {
+  margin: 0; padding: 18px 22px; border-radius: 18px;
+  background: rgba(216, 243, 106, .12); border: 1px solid rgba(216, 243, 106, .45); color: var(--ink); font-size: 16px;
+}
+.notify-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.closer-sub { margin: -20px auto 28px; max-width: 460px; color: #d9d4de; }
+.notify-form-center .notify-note { text-align: center; margin-left: 0; }
+@media (max-width: 560px) {
+  .notify-field { flex-direction: column; align-items: stretch; border-radius: 24px; padding: 8px; }
+  .notify-field input { padding: 12px 14px; text-align: center; }
+  .notify-field .cta { justify-content: center; }
+  .notify-note { margin-left: 0; text-align: center; }
+}
+
+/* Unicorn: tap-to-change color demo (unicorn.js), same idea as the coming-soon page */
+@property --glow { syntax: "<color>"; inherits: true; initial-value: #fff1d2; }
+.glow-demo {
+  --glow: #fff1d2;
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 5vw, 80px); align-items: center;
+  transition: --glow .5s ease;
+}
+.glow-demo[data-mode="chase"] { animation: glow-chase-color 6s linear infinite; }
+@keyframes glow-chase-color {
+  0%, 100% { --glow: #ff3b55; } 17% { --glow: #ffb21f; } 33% { --glow: #2fe07a; }
+  50% { --glow: #2bc4ff; } 67% { --glow: #4b5bff; } 83% { --glow: #d53cff; }
+}
+.glow-stage-wrap { display: grid; place-items: center; }
+.glow-stage {
+  position: relative; display: block; width: min(100%, 360px); aspect-ratio: 585 / 900;
+  padding: 0; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.glow-stage:focus-visible { outline: 2px solid var(--lime); outline-offset: 12px; border-radius: 24px; }
+.glow-halo {
+  position: absolute; inset: 0 -45%; pointer-events: none;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--glow) 55%, transparent), transparent);
+  filter: blur(24px); animation: glow-breathe 4.5s ease-in-out infinite;
+}
+@keyframes glow-breathe { 50% { opacity: .65; transform: scale(.93); } }
+.glow-squish { position: absolute; inset: 0; display: block; transform-origin: 50% 92%; isolation: isolate; }
+.glow-squish > * { position: absolute; inset: 0; width: 100%; height: 100%; }
+.glow-frame { opacity: 0; z-index: 0; filter: drop-shadow(0 30px 36px rgba(0, 0, 0, .45)); }
+.glow-frame.is-prev { opacity: 1; z-index: 1; }
+.glow-frame.is-on { opacity: 1; z-index: 2; transition: opacity .35s ease; }
+.glow-frame.is-entering { opacity: 0; }
+.glow-chase {
+  z-index: 3; opacity: 0; pointer-events: none;
+  -webkit-mask: url("/media/products/squishy-led-unicorn/web/glow-white.webp") center / 100% 100% no-repeat;
+  mask: url("/media/products/squishy-led-unicorn/web/glow-white.webp") center / 100% 100% no-repeat;
+  background: linear-gradient(180deg,
+    #ff3b55 0%, #ffb21f 8.33%, #fff04a 16.66%, #2fe07a 25%, #2bc4ff 33.33%, #6a5bff 41.66%,
+    #ff3b55 50%, #ffb21f 58.33%, #fff04a 66.66%, #2fe07a 75%, #2bc4ff 83.33%, #6a5bff 91.66%, #ff3b55 100%) 0 0 / 100% 200%;
+  mix-blend-mode: multiply;
+  transition: opacity .4s ease;
+  animation: glow-chase 3.2s linear infinite;
+}
+@keyframes glow-chase { to { background-position: 0 100%; } }
+.glow-demo[data-mode="chase"] .glow-chase { opacity: 1; }
+.glow-spark {
+  position: absolute; left: 50%; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px;
+  border-radius: 50%; z-index: 4; pointer-events: none;
+}
+.glow-copy .lede { margin: 20px 0 28px; }
+.glow-swatches { display: flex; flex-wrap: wrap; gap: 10px; }
+.glow-swatches button {
+  display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px 9px 10px;
+  border-radius: 999px; border: 1px solid var(--line); background: rgba(255, 255, 255, .04);
+  color: var(--ink); font: inherit; font-size: 14px; font-weight: 500; cursor: pointer;
+  transition: border-color .2s, background .2s;
+}
+.glow-swatches button::before {
+  content: ""; width: 14px; height: 14px; border-radius: 50%; background: var(--sw);
+  box-shadow: 0 0 10px var(--sw);
+}
+.glow-swatches .is-chase::before {
+  background: conic-gradient(#ff3b55, #ffb21f, #fff04a, #2fe07a, #2bc4ff, #6a5bff, #d53cff, #ff3b55); box-shadow: none;
+}
+.glow-swatches button:hover { border-color: rgba(255, 255, 255, .35); }
+.glow-swatches button[aria-checked="true"] { border-color: var(--glow); background: color-mix(in srgb, var(--glow) 14%, transparent); }
+.glow-swatches button:focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; }
+.glow-now { margin: 18px 0 0; font-size: 14px; color: var(--ink-dim); }
+.glow-now strong { color: var(--ink); font-weight: 600; }
+@media (max-width: 860px) {
+  .glow-demo { grid-template-columns: 1fr; text-align: center; }
+  .glow-stage { width: min(70vw, 300px); }
+  .glow-copy .lede { margin-inline: auto; }
+  .glow-swatches { justify-content: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .glow-demo[data-mode="chase"], .glow-halo, .glow-chase, .notify-badge span { animation: none; }
+  .glow-frame.is-on { transition: none; }
+}
