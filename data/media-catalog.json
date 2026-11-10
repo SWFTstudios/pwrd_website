@@ -6,7 +6,7 @@
       "id": "squishy-led-unicorn",
       "sku": "PWRD0004R",
       "name": "Squishy LED Unicorn Blind box",
-      "shopCard": "products/squishy-led-unicorn/web/shop-card.webp",
+      "shopCard": "products/squishy-led-unicorn/web/shop-card-v2.webp",
       "assets": [
         {
           "id": "packaging-box-features",
@@ -443,10 +443,10 @@
         },
         {
           "id": "web-shop-card",
-          "key": "products/squishy-led-unicorn/web/shop-card.webp",
+          "key": "products/squishy-led-unicorn/web/shop-card-v2.webp",
           "role": "web",
           "alt": "PWRD. Squishy LED Unicorn Blind Box packaging",
-          "source": "derived:box-front-cutout.webp"
+          "source": "derived:box-front-vision-cutout.webp"
         }
       ]
     }

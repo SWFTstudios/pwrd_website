@@ -47,22 +47,21 @@ def find_source(name: str) -> Path | None:
 
 
 def ensure_shop_card(dest: Path) -> Path:
-    """Build a transparent box cutout for the shop card if missing."""
+    """Return the transparent box cutout for the shop card.
+
+    The cutout is made with macOS subject lifting (smooth, anti-aliased edges);
+    the old white-background threshold cut left jagged edges, so it is not rebuilt here.
+    """
     if dest.is_file():
         return dest
-    from importlib.machinery import SourceFileLoader
-
-    cut = SourceFileLoader("cut", str(ROOT / "scripts" / "remove-white-bg.py")).load_module()
-    from PIL import Image
-
-    src = find_source("PWRD0004R_02.jpg")
-    if not src:
-        raise SystemExit("Missing PWRD0004R_02.jpg for shop-card cutout")
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    img = cut.cutout(Image.open(src), tolerance=42, feather=24, hole_area=0.01, grow=1.15)
-    img.thumbnail((1200, 1200), Image.LANCZOS)
-    img.save(dest, "WEBP", quality=90, method=6)
-    return dest
+    raise SystemExit(
+        f"Missing {dest.relative_to(ROOT)}. Make it on a Mac with:\n"
+        "  swift scripts/lift-subject.swift ~/Downloads/<folder>/PWRD0004R_02.jpg /tmp/box.png\n"
+        "then convert /tmp/box.png to WebP at that path, or download the current one:\n"
+        "  ./node_modules/.bin/wrangler r2 object get "
+        "pwrd-media/products/squishy-led-unicorn/web/shop-card-v2.webp "
+        f"--file {dest.relative_to(ROOT)} --remote"
+    )
 
 
 def upload(file: Path, key: str, dry_run: bool) -> tuple[str, bool, str]:
