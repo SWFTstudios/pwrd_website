@@ -26,12 +26,5 @@
 			"binding": "MEDIA"
 		}
 	],
-	// Confirmation emails (Cloudflare Email Sending). Only this sender address is allowed.
-	"send_email": [
-		{
-			"name": "EMAIL",
-			"allowed_sender_addresses": ["hello@staypwrd.com"]
-		}
-	],
 	"previews": {}
 }

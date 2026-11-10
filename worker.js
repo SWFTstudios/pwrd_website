@@ -13,19 +13,17 @@
 //
 // Signups live in the D1 database bound as DB. The table is created (and upgraded) on first use.
 // Each signup gets a private token; its unsubscribe link is in the export, ready for a mail merge.
-// New signups get a confirmation email from hello@staypwrd.com through the send_email binding EMAIL
-// (Cloudflare Email Sending; staypwrd.com must be onboarded there). If sending fails, the signup still counts.
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const TOKEN_RE = /^[a-f0-9]{32}$/;
 
 export default {
-  async fetch(request, env, ctx) {
+  async fetch(request, env) {
     const url = new URL(request.url);
     const { pathname } = url;
     if (pathname === "/api/notify") {
       if (request.method !== "POST") return json({ ok: false, error: "Method not allowed" }, 405);
-      return signup(request, env, ctx);
+      return signup(request, env);
     }
     if (pathname === "/api/notify/export") return exportSignups(request, env, url, "xlsx");
     if (pathname === "/api/notify/export.csv") return exportSignups(request, env, url, "csv");
@@ -89,7 +87,7 @@ async function ensureTable(env) {
   tableReady = true;
 }
 
-async function signup(request, env, ctx) {
+async function signup(request, env) {
   let data;
   try {
     const type = request.headers.get("content-type") || "";
@@ -111,102 +109,16 @@ async function signup(request, env, ctx) {
   const source = String(data.source || "coming-soon").replace(/[^\w-]/g, "").slice(0, 60) || "coming-soon";
 
   await ensureTable(env);
-  const before = await env.DB.prepare("SELECT token, unsubscribed_at FROM waitlist WHERE email = ?1 AND source = ?2")
-    .bind(email, source)
-    .first();
   // Signing up twice from the same page keeps the first date; signing up again after
   // unsubscribing turns notifications back on.
-  const row = await env.DB.prepare(
+  await env.DB.prepare(
     `INSERT INTO waitlist (email, source, created_at, token) VALUES (?1, ?2, ?3, ?4)
-     ON CONFLICT (email, source) DO UPDATE SET unsubscribed_at = NULL
-     RETURNING token`
+     ON CONFLICT (email, source) DO UPDATE SET unsubscribed_at = NULL`
   )
     .bind(email, source, new Date().toISOString(), newToken())
-    .first();
-
-  // Confirm new signups (and re-subscribes) by email, after responding so the form stays fast.
-  // Someone already on the list who submits again gets no second email.
-  const isNew = !before || before.unsubscribed_at;
-  if (isNew && row && env.EMAIL) {
-    const unsubscribeUrl = `${new URL(request.url).origin}/unsubscribe?t=${row.token}`;
-    ctx.waitUntil(sendConfirmation(env, email, source, unsubscribeUrl));
-  }
+    .run();
 
   return json({ ok: true });
-}
-
-// ---------- Confirmation email (Cloudflare Email Sending, binding EMAIL) ----------
-
-const FROM = { email: "hello@staypwrd.com", name: "PWRD." };
-
-const LISTS = {
-  "unicorn-walmart": {
-    subject: "You're on the list for the Squishy LED Unicorn",
-    heading: "You're on the list!",
-    lines: [
-      "Thanks for signing up. We'll send you one email as soon as the PWRD. Squishy LED Unicorn Blind Box is available on Walmart.com.",
-      "Six styles to collect, five colors plus a rainbow chase, and one mystery in every box. Which one will you get?",
-    ],
-    cta: { label: "See the Squishy LED Unicorn", path: "/squishy-led-unicorn" },
-  },
-  default: {
-    subject: "You're on the PWRD. list",
-    heading: "You're on the list!",
-    lines: ["Thanks for signing up. We'll email you when it launches. No spam, just the news."],
-    cta: { label: "Visit PWRD.", path: "/" },
-  },
-};
-
-async function sendConfirmation(env, email, source, unsubscribeUrl) {
-  const list = LISTS[source] || LISTS.default;
-  const origin = new URL(unsubscribeUrl).origin;
-  const ctaUrl = origin + list.cta.path;
-  const text = [
-    list.heading,
-    "",
-    ...list.lines.flatMap((l) => [l, ""]),
-    `${list.cta.label}: ${ctaUrl}`,
-    "",
-    "—",
-    "You're getting this because this address was entered on staypwrd.com.",
-    `Don't want these emails? Unsubscribe: ${unsubscribeUrl}`,
-  ].join("\n");
-  const html = `<!doctype html>
-<html lang="en"><body style="margin:0;padding:0;background:#f4f1f6;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f1f6;padding:32px 12px;">
-    <tr><td align="center">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#0d0b10;border-radius:20px;color:#f4f1f6;font-family:Helvetica,Arial,sans-serif;">
-        <tr><td style="padding:36px 36px 8px;font-family:Georgia,'Times New Roman',serif;font-size:28px;letter-spacing:-0.5px;">PWRD.</td></tr>
-        <tr><td style="padding:16px 36px 0;font-size:26px;font-weight:800;line-height:1.2;text-transform:uppercase;">${escapeHtml(list.heading)}</td></tr>
-        ${list.lines.map((l) => `<tr><td style="padding:16px 36px 0;font-size:16px;line-height:1.6;color:#d9d4de;">${escapeHtml(l)}</td></tr>`).join("")}
-        <tr><td style="padding:28px 36px 36px;">
-          <a href="${escapeHtml(ctaUrl)}" style="display:inline-block;background:#d8f36a;color:#141a05;text-decoration:none;font-weight:700;font-size:15px;padding:14px 24px;border-radius:999px;">${escapeHtml(list.cta.label)}</a>
-        </td></tr>
-      </table>
-      <p style="max-width:520px;margin:18px auto 0;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:1.6;color:#6f6878;">
-        You're getting this because this address was entered on staypwrd.com.<br />
-        Don't want these emails? <a href="${escapeHtml(unsubscribeUrl)}" style="color:#6f6878;">Unsubscribe</a>.
-      </p>
-    </td></tr>
-  </table>
-</body></html>`;
-
-  try {
-    await env.EMAIL.send({
-      from: FROM,
-      to: email,
-      subject: list.subject,
-      text,
-      html,
-      headers: {
-        "List-Unsubscribe": `<${unsubscribeUrl}>`,
-        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
-      },
-    });
-  } catch (err) {
-    // The signup is already saved; a failed confirmation shouldn't undo it. See Workers logs.
-    console.error("Confirmation email failed", err && err.code, err && err.message);
-  }
 }
 
 async function exportSignups(request, env, url, format) {
