@@ -1,9 +1,10 @@
-// PWRD. site Worker. Static pages are served from assets; this only handles /api/*.
+// PWRD. site Worker. Static pages are served from assets; this handles /api/* and /media/*.
 //
 //   POST /api/notify          Coming-soon signup: { email, source, company (honeypot) }
 //   GET  /api/notify/export   Download every signup as an Excel file (.xlsx).
 //                             Password protected with HTTP Basic auth: any username,
 //                             password = the WAITLIST_KEY secret.
+//   GET  /media/<key>         Product media from the MEDIA R2 bucket (pwrd-media).
 //
 // Signups live in the D1 database bound as DB. The table is created on first use.
 
@@ -18,9 +19,30 @@ export default {
     }
     if (pathname === "/api/notify/export") return exportSignups(request, env);
     if (pathname.startsWith("/api/")) return json({ ok: false, error: "Not found" }, 404);
+    if (pathname.startsWith("/media/")) return serveMedia(request, env, pathname);
     return env.ASSETS.fetch(request);
   },
 };
+
+async function serveMedia(request, env, pathname) {
+  if (request.method !== "GET" && request.method !== "HEAD") {
+    return new Response("Method not allowed", { status: 405, headers: { allow: "GET, HEAD" } });
+  }
+  // /media/unicorn/unicorn-box.webp → key unicorn/unicorn-box.webp
+  const key = decodeURIComponent(pathname.slice("/media/".length));
+  if (!key || key.includes("..") || key.startsWith("/") || key.includes("\\") || key.includes("\0")) {
+    return new Response("Not found", { status: 404 });
+  }
+  const object = await env.MEDIA.get(key);
+  if (!object) return new Response("Not found", { status: 404 });
+
+  const headers = new Headers();
+  object.writeHttpMetadata(headers);
+  headers.set("etag", object.httpEtag);
+  if (!headers.has("cache-control")) headers.set("cache-control", "public, max-age=86400");
+  if (request.method === "HEAD") return new Response(null, { headers });
+  return new Response(object.body, { headers });
+}
 
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {

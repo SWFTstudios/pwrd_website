@@ -13,3 +13,5 @@ scripts
 worker.js
 .dev.vars
 _launch
+_media_preview
+data/_staging

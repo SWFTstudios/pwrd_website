@@ -1,0 +1,454 @@
+{
+  "bucket": "pwrd-media",
+  "publicPathPrefix": "/media",
+  "products": {
+    "squishy-led-unicorn": {
+      "id": "squishy-led-unicorn",
+      "sku": "PWRD0004R",
+      "name": "Squishy LED Unicorn Blind box",
+      "shopCard": "products/squishy-led-unicorn/web/shop-card.webp",
+      "assets": [
+        {
+          "id": "packaging-box-features",
+          "key": "products/squishy-led-unicorn/packaging/box-features.jpg",
+          "role": "packaging",
+          "alt": "PWRD. Squishy LED Unicorn Blind Box packaging, features side",
+          "source": "PWRD0004R_01.jpg"
+        },
+        {
+          "id": "packaging-box-front",
+          "key": "products/squishy-led-unicorn/packaging/box-front.jpg",
+          "role": "packaging",
+          "alt": "PWRD. Squishy LED Unicorn Blind Box packaging, front and collect-all side",
+          "source": "PWRD0004R_02.jpg"
+        },
+        {
+          "id": "packaging-box-island",
+          "key": "products/squishy-led-unicorn/packaging/box-island.jpg",
+          "role": "packaging",
+          "alt": "PWRD. Squishy LED Unicorn Blind Box packaging with collectible island art",
+          "source": "PWRD0004R_03.jpg"
+        },
+        {
+          "id": "packaging-box-collect",
+          "key": "products/squishy-led-unicorn/packaging/box-collect.jpg",
+          "role": "packaging",
+          "alt": "PWRD. Squishy LED Unicorn Blind Box packaging showing all styles",
+          "source": "PWRD0004R_04.jpg"
+        },
+        {
+          "id": "packaging-unboxing",
+          "key": "products/squishy-led-unicorn/packaging/unboxing.jpg",
+          "role": "packaging",
+          "alt": "Opening the Squishy LED Unicorn Blind Box",
+          "source": "PWRD0004R_05.jpg"
+        },
+        {
+          "id": "product-lit-white",
+          "key": "products/squishy-led-unicorn/product/lit-white.jpg",
+          "role": "product",
+          "alt": "Squishy LED Unicorn lit warm white",
+          "source": "PWRD0004R_11.jpg"
+        },
+        {
+          "id": "product-lit-red",
+          "key": "products/squishy-led-unicorn/product/lit-red.jpg",
+          "role": "product",
+          "alt": "Squishy LED Unicorn lit red",
+          "source": "PWRD0004R_12.jpg"
+        },
+        {
+          "id": "product-lit-green",
+          "key": "products/squishy-led-unicorn/product/lit-green.jpg",
+          "role": "product",
+          "alt": "Squishy LED Unicorn lit green",
+          "source": "PWRD0004R_13.jpg"
+        },
+        {
+          "id": "product-lit-blue",
+          "key": "products/squishy-led-unicorn/product/lit-blue.jpg",
+          "role": "product",
+          "alt": "Squishy LED Unicorn lit blue",
+          "source": "PWRD0004R_14.jpg"
+        },
+        {
+          "id": "product-lit-purple",
+          "key": "products/squishy-led-unicorn/product/lit-purple.jpg",
+          "role": "product",
+          "alt": "Squishy LED Unicorn lit purple",
+          "source": "PWRD0004R_15.jpg"
+        },
+        {
+          "id": "product-studio-cloudy",
+          "key": "products/squishy-led-unicorn/product/studio-cloudy.jpg",
+          "role": "product",
+          "alt": "Cloudy Squishy LED Unicorn on a grey studio backdrop",
+          "source": "PWRD0004R_16.jpg"
+        },
+        {
+          "id": "product-led-modes",
+          "key": "products/squishy-led-unicorn/product/led-modes.jpg",
+          "role": "product",
+          "alt": "Squishy LED Unicorn with six LED color mode swatches",
+          "source": "PWRD0004R_17.jpg"
+        },
+        {
+          "id": "product-studio-front",
+          "key": "products/squishy-led-unicorn/product/studio-front.jpg",
+          "role": "product",
+          "alt": "Cloudy Squishy LED Unicorn studio product shot",
+          "source": "PWRD0004R_18.jpg"
+        },
+        {
+          "id": "product-studio-angle",
+          "key": "products/squishy-led-unicorn/product/studio-angle.jpg",
+          "role": "product",
+          "alt": "Squishy LED Unicorn studio angle shot",
+          "source": "PWRD0004R_19.jpg"
+        },
+        {
+          "id": "color-stormy",
+          "key": "products/squishy-led-unicorn/colors/stormy.jpg",
+          "role": "colorway",
+          "character": "Stormy",
+          "alt": "Stormy rare Squishy LED Unicorn with purple mane and gold glitter",
+          "source": "PWRD0004RA_02.jpg"
+        },
+        {
+          "id": "color-blaze",
+          "key": "products/squishy-led-unicorn/colors/blaze.jpg",
+          "role": "colorway",
+          "character": "Blaze",
+          "alt": "Blaze Squishy LED Unicorn with red mane",
+          "source": "PWRD0004RB_02.jpg"
+        },
+        {
+          "id": "color-meadow",
+          "key": "products/squishy-led-unicorn/colors/meadow.jpg",
+          "role": "colorway",
+          "character": "Meadow",
+          "alt": "Meadow Squishy LED Unicorn with green mane",
+          "source": "PWRD0004RC_02.jpg"
+        },
+        {
+          "id": "color-cloudy",
+          "key": "products/squishy-led-unicorn/colors/cloudy.jpg",
+          "role": "colorway",
+          "character": "Cloudy",
+          "alt": "Cloudy Squishy LED Unicorn with grey mane",
+          "source": "PWRD0004RD_02.jpg"
+        },
+        {
+          "id": "color-bolt",
+          "key": "products/squishy-led-unicorn/colors/bolt.jpg",
+          "role": "colorway",
+          "character": "Bolt",
+          "alt": "Bolt Squishy LED Unicorn with yellow mane",
+          "source": "PWRD0004RE_02.jpg"
+        },
+        {
+          "id": "color-misty",
+          "key": "products/squishy-led-unicorn/colors/misty.jpg",
+          "role": "colorway",
+          "character": "Misty",
+          "alt": "Misty Squishy LED Unicorn with blue mane",
+          "source": "PWRD0004RF_02.jpg"
+        },
+        {
+          "id": "lifestyle-collect-all",
+          "key": "products/squishy-led-unicorn/lifestyle/collect-all.jpg",
+          "role": "lifestyle",
+          "alt": "All six Squishy LED Unicorn colorways together",
+          "source": "PWRD0004R_L_01.jpg"
+        },
+        {
+          "id": "lifestyle-02",
+          "key": "products/squishy-led-unicorn/lifestyle/02.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_02.jpg"
+        },
+        {
+          "id": "lifestyle-03",
+          "key": "products/squishy-led-unicorn/lifestyle/03.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_03.jpg"
+        },
+        {
+          "id": "lifestyle-04",
+          "key": "products/squishy-led-unicorn/lifestyle/04.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_04.jpg"
+        },
+        {
+          "id": "lifestyle-05",
+          "key": "products/squishy-led-unicorn/lifestyle/05.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_05.jpg"
+        },
+        {
+          "id": "lifestyle-06",
+          "key": "products/squishy-led-unicorn/lifestyle/06.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_06.jpg"
+        },
+        {
+          "id": "lifestyle-12",
+          "key": "products/squishy-led-unicorn/lifestyle/12.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_12.jpg"
+        },
+        {
+          "id": "lifestyle-13",
+          "key": "products/squishy-led-unicorn/lifestyle/13.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_13.jpg"
+        },
+        {
+          "id": "lifestyle-14",
+          "key": "products/squishy-led-unicorn/lifestyle/14.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_14.jpg"
+        },
+        {
+          "id": "lifestyle-15",
+          "key": "products/squishy-led-unicorn/lifestyle/15.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_15.jpg"
+        },
+        {
+          "id": "lifestyle-16",
+          "key": "products/squishy-led-unicorn/lifestyle/16.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_16.jpg"
+        },
+        {
+          "id": "lifestyle-17",
+          "key": "products/squishy-led-unicorn/lifestyle/17.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_17.jpg"
+        },
+        {
+          "id": "lifestyle-18",
+          "key": "products/squishy-led-unicorn/lifestyle/18.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_18.jpg"
+        },
+        {
+          "id": "lifestyle-19",
+          "key": "products/squishy-led-unicorn/lifestyle/19.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorns glowing on a bed with fairy lights",
+          "source": "PWRD0004R_L_19.jpg"
+        },
+        {
+          "id": "lifestyle-20",
+          "key": "products/squishy-led-unicorn/lifestyle/20.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_20.jpg"
+        },
+        {
+          "id": "lifestyle-21",
+          "key": "products/squishy-led-unicorn/lifestyle/21.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_21.jpg"
+        },
+        {
+          "id": "lifestyle-22",
+          "key": "products/squishy-led-unicorn/lifestyle/22.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_22.jpg"
+        },
+        {
+          "id": "lifestyle-23",
+          "key": "products/squishy-led-unicorn/lifestyle/23.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_23.jpg"
+        },
+        {
+          "id": "lifestyle-24",
+          "key": "products/squishy-led-unicorn/lifestyle/24.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_24.jpg"
+        },
+        {
+          "id": "lifestyle-30",
+          "key": "products/squishy-led-unicorn/lifestyle/30.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_30.jpg"
+        },
+        {
+          "id": "lifestyle-31",
+          "key": "products/squishy-led-unicorn/lifestyle/31.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_31.jpg"
+        },
+        {
+          "id": "lifestyle-32",
+          "key": "products/squishy-led-unicorn/lifestyle/32.jpg",
+          "role": "lifestyle",
+          "alt": "Meadow Squishy LED Unicorn glowing on a shelf",
+          "source": "PWRD0004R_L_32.jpg"
+        },
+        {
+          "id": "lifestyle-33",
+          "key": "products/squishy-led-unicorn/lifestyle/33.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_33.jpg"
+        },
+        {
+          "id": "lifestyle-34",
+          "key": "products/squishy-led-unicorn/lifestyle/34.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_34.jpg"
+        },
+        {
+          "id": "lifestyle-35",
+          "key": "products/squishy-led-unicorn/lifestyle/35.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_35.jpg"
+        },
+        {
+          "id": "lifestyle-36",
+          "key": "products/squishy-led-unicorn/lifestyle/36.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_36.jpg"
+        },
+        {
+          "id": "lifestyle-37",
+          "key": "products/squishy-led-unicorn/lifestyle/37.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_37.jpg"
+        },
+        {
+          "id": "lifestyle-38",
+          "key": "products/squishy-led-unicorn/lifestyle/38.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_38.jpg"
+        },
+        {
+          "id": "lifestyle-39",
+          "key": "products/squishy-led-unicorn/lifestyle/39.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_39.jpg"
+        },
+        {
+          "id": "lifestyle-40",
+          "key": "products/squishy-led-unicorn/lifestyle/40.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_40.jpg"
+        },
+        {
+          "id": "lifestyle-41",
+          "key": "products/squishy-led-unicorn/lifestyle/41.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_41.jpg"
+        },
+        {
+          "id": "lifestyle-42",
+          "key": "products/squishy-led-unicorn/lifestyle/42.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_42.jpg"
+        },
+        {
+          "id": "lifestyle-43",
+          "key": "products/squishy-led-unicorn/lifestyle/43.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_43.jpg"
+        },
+        {
+          "id": "lifestyle-44",
+          "key": "products/squishy-led-unicorn/lifestyle/44.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_44.jpg"
+        },
+        {
+          "id": "lifestyle-45",
+          "key": "products/squishy-led-unicorn/lifestyle/45.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_45.jpg"
+        },
+        {
+          "id": "lifestyle-46",
+          "key": "products/squishy-led-unicorn/lifestyle/46.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_46.jpg"
+        },
+        {
+          "id": "lifestyle-47",
+          "key": "products/squishy-led-unicorn/lifestyle/47.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_47.jpg"
+        },
+        {
+          "id": "lifestyle-48",
+          "key": "products/squishy-led-unicorn/lifestyle/48.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_48.jpg"
+        },
+        {
+          "id": "lifestyle-49",
+          "key": "products/squishy-led-unicorn/lifestyle/49.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_49.jpg"
+        },
+        {
+          "id": "lifestyle-50",
+          "key": "products/squishy-led-unicorn/lifestyle/50.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_50.jpg"
+        },
+        {
+          "id": "lifestyle-51",
+          "key": "products/squishy-led-unicorn/lifestyle/51.jpg",
+          "role": "lifestyle",
+          "alt": "Squishy LED Unicorn lifestyle photo",
+          "source": "PWRD0004R_L_51.jpg"
+        },
+        {
+          "id": "web-shop-card",
+          "key": "products/squishy-led-unicorn/web/shop-card.webp",
+          "role": "web",
+          "alt": "PWRD. Squishy LED Unicorn Blind Box packaging",
+          "source": "derived:box-front-cutout.webp"
+        }
+      ]
+    }
+  }
+}

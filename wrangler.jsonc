@@ -1,19 +1,29 @@
 {
-  "name": "pwrd-website",
-  "compatibility_date": "2026-10-01",
-  // Static site served as assets; worker.js only answers /api/* (coming-soon signups).
-  "main": "worker.js",
-  "assets": {
-    "directory": ".",
-    "binding": "ASSETS",
-    "run_worker_first": ["/api/*"]
-  },
-  // Signup list. Wrangler creates the database on the first deploy and fills in its id.
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "pwrd-signups"
-    }
-  ],
-  "previews": {}
+	"name": "pwrd-website",
+	"compatibility_date": "2026-10-01",
+	// Static site served as assets; worker.js answers /api/* (signups) and /media/* (R2).
+	"main": "worker.js",
+	"assets": {
+		"directory": ".",
+		"binding": "ASSETS",
+		"run_worker_first": [
+			"/api/*",
+			"/media/*"
+		]
+	},
+	// Signup list. Wrangler creates the database on the first deploy and fills in its id.
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "pwrd-signups"
+		}
+	],
+	// Product media (e.g. Squishy LED Unicorn) lives in R2, served at /media/*.
+	"r2_buckets": [
+		{
+			"bucket_name": "pwrd-media",
+			"binding": "MEDIA"
+		}
+	],
+	"previews": {}
 }

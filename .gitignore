@@ -3,3 +3,5 @@ node_modules/
 .wrangler/
 .dev.vars
 _launch/
+_media_preview/
+data/_staging/
