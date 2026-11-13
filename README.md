@@ -30,7 +30,7 @@ To use a true 3D model later (for example a `.glb` from a 3D scan or an image-to
 | `lifestyle-*.webp` | Lifestyle photos |
 | `brand/pwrd-logo-white.svg` | Official PWRD. logo (with ™), vector paths taken from `PWRD_Logo.ai`. White, for the dark header and footer |
 | `/favicon.svg`, `/favicon.ico`, `/apple-touch-icon.png` | "P." monogram built from the official logo's P and period, on the site's dark tile |
-| `unicorn/glow-*.webp`, `unicorn/shop-card-v3.webp` | Squishy LED Unicorn color frames and box cutout (copies of `products/squishy-led-unicorn/web/*` in R2), shipped with the site so the home launch section, product hero, color demo, shop card and deal pop-up never depend on the media bucket |
+| `unicorn/*` | Squishy LED Unicorn images shipped with the site, so pages never depend on the media bucket: `glow-*.webp` and `shop-card-v3.webp` (copies of `web/*` in R2), `colors/*.webp` (style photos, 800px) and `gallery/*.webp` (product page gallery, up to 1600px), both web-sized WebP versions of the R2 JPGs |
 | `gallery/<color>/*` | Product page gallery. `.webp` files are white-background product shots turned into transparent cutouts; `.avif` files are lifestyle and infographic images, copied unaltered. The list and order live in `GALLERY` in `main.js`. |
 
 ## Adding a product

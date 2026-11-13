@@ -340,7 +340,7 @@
   // ---------- PDP gallery + lightbox ----------
   // `cutout` images are transparent product shots; everything else is shown as shot.
   const G = "assets/img/gallery/";
-  const U = "/media/products/squishy-led-unicorn/";
+  const U = "assets/img/unicorn/gallery/";
   const GALLERY = {
     pink: [
       { src: "assets/img/pwrd-pink.webp", alt: "PWRD Pink Liquid Glitter wireless headphones, side view", cutout: true },
@@ -374,22 +374,22 @@
       { src: G + "stand/stand-lifestyle-desk.avif", alt: "LED charger stand glowing pink on a desk with a phone charging on the base" },
       { src: G + "stand/stand-lifestyle-bedside.avif", alt: "LED charger stand glowing orange on a nightstand: dimmer and brightener, 16 color functions, 4 light modes, infrared remote" },
     ],
-    // Served from the pwrd-media R2 bucket (see data/media-catalog.json).
+    // Web-sized copies of the pwrd-media R2 photos (see data/media-catalog.json), shipped with the site.
     unicorn: [
-      { src: U + "product/led-modes.jpg", alt: "Squishy LED Unicorn with its six light modes: warm white, red, green, blue, purple and rainbow chase" },
-      { src: U + "lifestyle/collect-all.jpg", alt: "All six Squishy LED Unicorn styles together" },
-      { src: U + "product/lit-white.jpg", alt: "Squishy LED Unicorn lit warm white" },
-      { src: U + "product/lit-red.jpg", alt: "Squishy LED Unicorn lit red" },
-      { src: U + "product/lit-green.jpg", alt: "Squishy LED Unicorn lit green" },
-      { src: U + "product/lit-blue.jpg", alt: "Squishy LED Unicorn lit blue" },
-      { src: U + "product/lit-purple.jpg", alt: "Squishy LED Unicorn lit purple" },
-      { src: U + "lifestyle/19.jpg", alt: "Squishy LED Unicorns glowing on a bed with fairy lights" },
-      { src: U + "lifestyle/32.jpg", alt: "Meadow Squishy LED Unicorn glowing on a shelf" },
-      { src: U + "product/studio-front.jpg", alt: "Cloudy Squishy LED Unicorn studio product shot" },
-      { src: U + "product/studio-angle.jpg", alt: "Squishy LED Unicorn studio angle shot" },
-      { src: U + "packaging/box-features.jpg", alt: "Squishy LED Unicorn blind box: rechargeable battery with USB cord, sound reactive setting, 5 LED color modes plus dynamic chase mode, touch control" },
-      { src: U + "packaging/box-collect.jpg", alt: "Squishy LED Unicorn blind box showing all six styles: Bolt, Blaze, Cloudy, Meadow, Misty and the rare Stormy" },
-      { src: U + "packaging/unboxing.jpg", alt: "Opening the Squishy LED Unicorn blind box" },
+      { src: U + "led-modes.webp", alt: "Squishy LED Unicorn with its six light modes: warm white, red, green, blue, purple and rainbow chase" },
+      { src: U + "collect-all.webp", alt: "All six Squishy LED Unicorn styles together" },
+      { src: U + "lit-white.webp", alt: "Squishy LED Unicorn lit warm white" },
+      { src: U + "lit-red.webp", alt: "Squishy LED Unicorn lit red" },
+      { src: U + "lit-green.webp", alt: "Squishy LED Unicorn lit green" },
+      { src: U + "lit-blue.webp", alt: "Squishy LED Unicorn lit blue" },
+      { src: U + "lit-purple.webp", alt: "Squishy LED Unicorn lit purple" },
+      { src: U + "lifestyle-19.webp", alt: "Squishy LED Unicorns glowing on a bed with fairy lights" },
+      { src: U + "lifestyle-32.webp", alt: "Meadow Squishy LED Unicorn glowing on a shelf" },
+      { src: U + "studio-front.webp", alt: "Cloudy Squishy LED Unicorn studio product shot" },
+      { src: U + "studio-angle.webp", alt: "Squishy LED Unicorn studio angle shot" },
+      { src: U + "box-features.webp", alt: "Squishy LED Unicorn blind box: rechargeable battery with USB cord, sound reactive setting, 5 LED color modes plus dynamic chase mode, touch control" },
+      { src: U + "box-collect.webp", alt: "Squishy LED Unicorn blind box showing all six styles: Bolt, Blaze, Cloudy, Meadow, Misty and the rare Stormy" },
+      { src: U + "unboxing.webp", alt: "Opening the Squishy LED Unicorn blind box" },
     ],
   };
 
