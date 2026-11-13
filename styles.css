@@ -1167,8 +1167,8 @@ html.intro:not(.intro-mounted) body::after { content: ""; position: fixed; inset
 .glow-frame.is-entering { opacity: 0; }
 .glow-chase {
   z-index: 3; opacity: 0; pointer-events: none;
-  -webkit-mask: url("/media/products/squishy-led-unicorn/web/glow-white.webp") center / 100% 100% no-repeat;
-  mask: url("/media/products/squishy-led-unicorn/web/glow-white.webp") center / 100% 100% no-repeat;
+  -webkit-mask: url("/assets/img/unicorn/glow-white.webp") center / 100% 100% no-repeat;
+  mask: url("/assets/img/unicorn/glow-white.webp") center / 100% 100% no-repeat;
   background: linear-gradient(180deg,
     #ff3b55 0%, #ffb21f 8.33%, #fff04a 16.66%, #2fe07a 25%, #2bc4ff 33.33%, #6a5bff 41.66%,
     #ff3b55 50%, #ffb21f 58.33%, #fff04a 66.66%, #2fe07a 75%, #2bc4ff 83.33%, #6a5bff 91.66%, #ff3b55 100%) 0 0 / 100% 200%;

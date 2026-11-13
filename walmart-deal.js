@@ -17,7 +17,7 @@
   const DEAL = {
     url: "https://www.walmart.com/ip/PWRD-LED-Blind-Box-Unicorn-Tap-Light/20416705601?classType=REGULAR&athbdg=L1800",
     name: "Squishy LED Unicorn Blind Box",
-    image: "/media/products/squishy-led-unicorn/web/glow-white.webp",
+    image: "/assets/img/unicorn/glow-white.webp",
     price: 9.0, // Walmart price now (null to hide prices)
     was: 14.88, // strikethrough price (null for none)
     dealLabel: "Black Friday Deal",
