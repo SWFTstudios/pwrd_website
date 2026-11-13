@@ -1,7 +1,7 @@
 /* Squishy LED Unicorn page (squishy-led-unicorn.html).
    - Color demo: tap the unicorn (or a swatch) to cycle its light, ending with a rainbow chase.
      It cycles on its own while on screen until someone interacts. Same idea as coming-soon.js.
-   - "Notify me" forms post to /api/notify with source "unicorn-walmart" (see worker.js). */
+   - Price, Walmart buttons, sticky buy bar and the deal pop-up live in walmart-deal.js. */
 (() => {
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -118,51 +118,4 @@
     }
   }
 
-  // ---------- Notify me forms ----------
-  document.querySelectorAll(".notify-form").forEach((form) => {
-    const note = form.querySelector(".notify-note");
-    const input = form.elements.email;
-    const submit = form.querySelector("button[type=submit]");
-    const defaultNote = note.textContent;
-
-    function showError(message) {
-      form.classList.add("is-error");
-      note.textContent = message;
-    }
-
-    input.addEventListener("input", () => {
-      if (form.classList.contains("is-error")) { form.classList.remove("is-error"); note.textContent = defaultNote; }
-    });
-
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = input.value.trim();
-      if (!email || !input.checkValidity()) {
-        showError("Please enter a valid email address.");
-        input.focus();
-        return;
-      }
-      const label = submit.textContent;
-      submit.disabled = true;
-      submit.textContent = "Adding…";
-      try {
-        const res = await fetch(form.action, {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(Object.fromEntries(new FormData(form))),
-        });
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok || !data.ok) throw new Error(data.error || "");
-        form.classList.remove("is-error");
-        form.classList.add("is-done");
-        note.textContent = `You're on the list! We'll email ${email} when the Squishy LED Unicorn is at Walmart.`;
-      } catch (err) {
-        // A TypeError means the request never reached the server.
-        showError((!(err instanceof TypeError) && err.message) || "Something went wrong. Please try again in a moment.");
-      } finally {
-        submit.disabled = false;
-        submit.textContent = label;
-      }
-    });
-  });
 })();

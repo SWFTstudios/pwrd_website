@@ -62,6 +62,12 @@ python3 scripts/remove-white-bg.py path/to/photo.avif --out assets/img/gallery/p
 
 Only white connected to the edges (plus large enclosed gaps, like under the headband) is removed, so white details on the product stay. Needs `pillow`, `numpy` and `scipy`.
 
+## Squishy LED Unicorn (just launched, sold on Walmart)
+
+`squishy-led-unicorn.html` is the product page; the home page has a "Just launched" section and the shop card a badge. Nothing is sold on this site: every buy button goes to the Walmart listing.
+
+`walmart-deal.js` holds the Walmart price, strikethrough price, deal name and end time, and rating in one `DEAL` object at the top. It fills every price block, the sticky buy bar on the product page and the promo pop-up (shown once per browser session on the home and unicorn pages, after a few seconds, 40% scroll or when the cursor leaves the window). When the deal ends, prices and the pop-up hide themselves and buttons just say "Shop at Walmart", so update `DEAL` whenever Walmart's price or promo changes.
+
 ## Coming-soon page
 
 `coming-soon.html` + `coming-soon.css` + `coming-soon.js`. The whole page sits behind frosted glass: only the product's light shows through, and tapping the glass squishes it and changes its color. Keep product names and descriptions out of this page, its assets and this repo (the repo is public) until launch.
