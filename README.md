@@ -30,6 +30,7 @@ To use a true 3D model later (for example a `.glb` from a 3D scan or an image-to
 | `lifestyle-*.webp` | Lifestyle photos |
 | `brand/pwrd-logo-white.svg` | Official PWRD. logo (with ™), vector paths taken from `PWRD_Logo.ai`. White, for the dark header and footer |
 | `/favicon.svg`, `/favicon.ico`, `/apple-touch-icon.png` | "P." monogram built from the official logo's P and period, on the site's dark tile |
+| `unicorn/*` | Squishy LED Unicorn images shipped with the site, so pages never depend on the media bucket: `glow-*.webp` and `shop-card-v3.webp` (copies of `web/*` in R2), `colors/*.webp` (style photos, 800px) and `gallery/*.webp` (product page gallery, up to 1600px), both web-sized WebP versions of the R2 JPGs |
 | `gallery/<color>/*` | Product page gallery. `.webp` files are white-background product shots turned into transparent cutouts; `.avif` files are lifestyle and infographic images, copied unaltered. The list and order live in `GALLERY` in `main.js`. |
 
 ## Adding a product
@@ -61,6 +62,12 @@ python3 scripts/remove-white-bg.py path/to/photo.avif --out assets/img/gallery/p
 ```
 
 Only white connected to the edges (plus large enclosed gaps, like under the headband) is removed, so white details on the product stay. Needs `pillow`, `numpy` and `scipy`.
+
+## Squishy LED Unicorn (just launched, sold on Walmart)
+
+`squishy-led-unicorn.html` is the product page; the home page has a "Just launched" section and the shop card a badge. Nothing is sold on this site: every buy button goes to the Walmart listing.
+
+`walmart-deal.js` holds the Walmart price, strikethrough price, deal name and end time, and rating in one `DEAL` object at the top. It fills every price block, the sticky buy bar on the product page and the promo pop-up (shown once per browser session on the home and unicorn pages, after a few seconds, 40% scroll or when the cursor leaves the window). When the deal ends, prices and the pop-up hide themselves and buttons just say "Shop at Walmart", so update `DEAL` whenever Walmart's price or promo changes.
 
 ## Coming-soon page
 
